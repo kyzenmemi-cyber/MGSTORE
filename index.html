@@ -197,6 +197,9 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;align-items:baseline}
 .card h3{margin:0;font-size:15px;font-weight:600}
 .card .price{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+/* discount: new price green, old price crossed out with a red line */
+.sale{color:#16a34a;font-weight:700}
+.was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
 .card .add{align-self:flex-start;font-weight:600;border-bottom:1px solid var(--fg);padding-bottom:1px}
 .card .add:hover{border-bottom-width:2px}
 
@@ -694,6 +697,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   function saveCache(){if(sb){try{store.set(CK,{t:Date.now(),rows:CROWS,stock:STOCK})}catch(e){}}}
   function loadCatalog(){return api.catalog().then(function(rows){CROWS=rows;applyCatalog(rows)},function(){})}
   local.catalog=function(){return Promise.resolve([])};
+  function priceHtml(p){return p.old>p.price?'<b class="sale">'+fmt(p.price)+'</b><s class="was">'+fmt(p.old)+'</s>':fmt(p.price)}
   remote.catalog=function(){return sb.from('products').select('id,name,price,old_price,description,image_url,active,category').then(function(r){if(r.error)throw r.error;return r.data})};
   local.adminSaveProduct=function(){return Promise.reject(new Error('admin only'))};
   remote.adminSaveProduct=function(row){
@@ -789,7 +793,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     $('#grid').innerHTML = LIST.map(function(p){
       return '<article class="card">'+
         '<button class="ph" type="button" data-qv="'+p.id+'" aria-label="Түргэн харах: '+esc(p.name)+'">'+pic(p)+'</button>'+
-        '<div class="row"><h3>'+esc(p.name)+'</h3><span class="price">'+fmt(p.price)+(p.old?' <s class="mute">'+fmt(p.old)+'</s>':'')+'</span></div>'+
+        '<div class="row"><h3>'+esc(p.name)+'</h3><span class="price">'+priceHtml(p)+'</span></div>'+
         rateLine(p.id)+
         (soldOut(p.id)?'<button class="add" type="button" disabled style="opacity:.55;cursor:default;border-bottom-color:transparent">Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">Сагсанд нэмэх</button>')+
       '</article>';
@@ -847,7 +851,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     openModal('<div class="qv-grid"><div class="ph" id="qvPh">'+pic(p)+'</div><div>'+
       '<button class="x link" type="button" data-close-modal>Хаах</button>'+
       '<h2 id="modalTitle">'+esc(p.name)+'</h2>'+
-      '<p class="mono" style="font-size:16px;margin:8px 0 14px">'+fmt(p.price)+(p.old?' <s class="mute">'+fmt(p.old)+'</s>':'')+'</p>'+
+      '<p class="mono" style="font-size:16px;margin:8px 0 14px">'+priceHtml(p)+'</p>'+
       '<p class="mute" style="white-space:pre-line">'+esc(p.desc)+'</p>'+
       (p.gallery?'<div class="sw">'+p.gallery.map(function(g,i){return '<button type="button" data-sw="'+i+'" aria-pressed="'+(i===0)+'">'+g[0]+'</button>'}).join('')+'</div>':'')+
       '<div class="qty" style="margin:18px 0"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
@@ -1121,8 +1125,9 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     openModal('<button class="x link" type="button" data-close-modal>Хаах</button><h2 id="modalTitle">'+(p?'Бараа засах':'Шинэ бараа')+'</h2>'+
       '<form id="prodForm" novalidate style="margin-top:14px">'+
       '<div class="field"><label for="prName">Барааны нэр</label><input id="prName" maxlength="120" value="'+esc(p?p.name:'')+'"></div>'+
-      '<div class="two"><div class="field"><label for="prPrice">Үнэ (₮)</label><input id="prPrice" type="number" inputmode="numeric" min="1" step="1" value="'+(p?p.price:'')+'"></div>'+
-      '<div class="field"><label for="prOld">Хуучин үнэ (заавал биш)</label><input id="prOld" type="number" inputmode="numeric" min="1" step="1" value="'+(p&&p.old?p.old:'')+'"></div></div>'+
+      '<div class="two"><div class="field"><label for="prPrice">Борлуулах үнэ (₮)</label><input id="prPrice" type="number" inputmode="numeric" min="1" step="1" value="'+(p?p.price:'')+'"></div>'+
+      '<div class="field"><label for="prOld">Хямдралын өмнөх үнэ (₮)</label><input id="prOld" type="number" inputmode="numeric" min="1" step="1" value="'+(p&&p.old?p.old:'')+'"></div></div>'+
+      '<div class="field"><label for="prPct">Хямдрал (%)</label><input id="prPct" type="number" inputmode="numeric" min="1" max="95" step="1" placeholder="жишээ нь 30"><span class="fine" id="prPctHint">Хямдралгүй бол хоёр талбарыг хоосон орхино. Хувь бичихэд үнэ автоматаар бодогдоно. Сайт дээр хуучин үнэ улаан зураасаар дарагдаж, шинэ үнэ ногоон харагдана.</span></div>'+
       '<div class="field"><label for="prCat">Төрөл (шүүлтүүрт гарна)</label><input id="prCat" list="prCats" maxlength="40" autocomplete="off" value="'+esc(p?(p.cat||''):'')+'"><datalist id="prCats">'+catsNow().concat(CATS_ORDER).filter(function(c,i,a){return a.indexOf(c)===i}).map(function(c){return '<option value="'+esc(c)+'">'}).join('')+'</datalist></div>'+
       '<div class="field"><label for="prDesc">Мэдээлэл (мөр бүрт нэг онцлог)</label><textarea id="prDesc" rows="7" maxlength="2000" style="'+box+'">'+esc(p?p.desc:'')+'</textarea></div>'+
       '<div class="field"><label for="prFile">Зураг'+(p?' (солих бол сонгоно)':'')+'</label><input id="prFile" type="file" accept="image/*"></div>'+
@@ -1136,6 +1141,12 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       d.disabled=true;
       api.adminDeleteProduct(p.id).then(function(){return loadCatalog()}).then(function(){closeModal();renderGrid();renderAdminStock();toast('Бараа устгагдлаа')},function(){d.disabled=false;$('#prErr').textContent='Устгаж чадсангүй. Дахин оролдоно уу.'});
     }}
+    (function(){
+      var P=$('#prPrice'),O=$('#prOld'),T=$('#prPct');
+      var upd=function(){var pr=+P.value,ol=+O.value;T.value=(ol>0&&pr>0&&pr<ol)?Math.round((1-pr/ol)*100):''};
+      T.oninput=function(){var pc=+T.value;if(!(pc>0&&pc<100))return;if(!(+O.value>0))O.value=P.value;var ol=+O.value;if(ol>0)P.value=Math.max(1,Math.round(ol*(1-pc/100)/100)*100)};
+      P.oninput=upd;O.oninput=upd;upd();
+    })();
     $('#prodForm').onsubmit=function(e){
       e.preventDefault();
       var err=$('#prErr'), name=$('#prName').value.trim(), price=parseInt($('#prPrice').value,10), oldRaw=$('#prOld').value.trim(), oldv=oldRaw===''?null:parseInt(oldRaw,10), f=$('#prFile').files[0];
@@ -1143,6 +1154,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       if(!name) return bad('Барааны нэрийг бичнэ үү.','#prName');
       if(!(price>0)) return bad('Үнийг 0-ээс их тоогоор бичнэ үү.','#prPrice');
       if(oldv!==null&&!(oldv>0)) return bad('Хуучин үнэ буруу байна.','#prOld');
+      if(oldv!==null&&oldv<=price) return bad('Хямдралын өмнөх үнэ нь борлуулах үнээс их байх ёстой.','#prOld');
       if(!p&&!f) return bad('Зураг сонгоно уу.','#prFile');
       if(f&&!/^image\//.test(f.type)) return bad('Зөвхөн зураг (JPG, PNG) сонгоно уу.','#prFile');
       err.textContent=''; var btn=$('#prodForm button[type="submit"]'); btn.disabled=true;
