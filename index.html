@@ -678,13 +678,21 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1"></div><div class="sk sk-line" style="width:70%"></div><div class="sk sk-line" style="width:40%"></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
   function skRows(n){var h='';for(var i=0;i<n;i++)h+='<div class="sk sk-row" aria-hidden="true"></div>';return h}
   // stock is per colour when a colour has its own row (key "id|colour"), otherwise per product (key id)
-  function stockOf(id,col){var k=col?id+'|'+col:null;return (k&&STOCK[k]!==undefined)?STOCK[k]:STOCK[id]}
-  function soldOut(id,col){
-    var p=byId(id);
-    if(col===undefined&&p&&p.colors&&p.colors.length) return p.colors.every(function(c){var v=stockOf(id,c.n);return v!==undefined&&v<=0});
-    var v=stockOf(id,col);return v!==undefined&&v<=0;
+  function stockOf(id,opt){
+    if(opt){var k=id+'|'+opt;if(STOCK[k]!==undefined)return STOCK[k];var i=opt.indexOf(', ');if(i>0){k=id+'|'+opt.slice(0,i);if(STOCK[k]!==undefined)return STOCK[k]}}
+    return STOCK[id];
   }
-  function maxQty(id,col){var v=stockOf(id,col);return v===undefined?9:Math.max(0,Math.min(9,v))}
+  // every colour and connector combination of a product, for example "Хар, Type-C"
+  function combos(p){
+    var cs=(p.colors&&p.colors.length)?p.colors.map(function(c){return c.n}):[''], ks=(p.conns&&p.conns.length)?p.conns:[''], out=[];
+    cs.forEach(function(c){ks.forEach(function(k){var o=[c,k].filter(Boolean).join(', ');if(o)out.push(o)})});
+    return out;
+  }
+  function soldOut(id,opt){
+    if(opt===undefined){var p=byId(id),cb=p?combos(p):[];if(cb.length)return cb.every(function(o){var v=stockOf(id,o);return v!==undefined&&v<=0})}
+    var v=stockOf(id,opt);return v!==undefined&&v<=0;
+  }
+  function maxQty(id,opt){var v=stockOf(id,opt);return v===undefined?9:Math.max(0,Math.min(9,v))}
   // catalog: the built-in list above plus the admin's changes (a row with a built-in id overrides it, a new id adds a product, active=false hides it)
   function applyCatalog(rows){
     var all=BASE.map(function(p){return Object.assign({},p)}), news=[];
@@ -723,7 +731,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   remote.stock=function(){return sb.from('stock').select('product_id,variant,qty').then(function(r){if(r.error)throw r.error;var m={};r.data.forEach(function(x){m[x.variant?x.product_id+'|'+x.variant:x.product_id]=x.qty});return m})};
   remote.adminSetStock=function(key,q){var k=String(key),i=k.indexOf('|');return sb.from('stock').upsert({product_id:parseInt(k,10),variant:i>0?k.slice(i+1):'',qty:q,updated_at:new Date().toISOString()},{onConflict:'product_id,variant'}).then(function(r){if(r.error)throw r.error})};
   local.adminSetStock=function(){return Promise.reject(new Error('admin only'))};
-  function loadStock(){return loadCatalog().then(function(){return api.stock()}).then(function(m){STOCK=m;saveCache()},function(){}).then(function(){GRID_LOADING=false;renderGrid();cart=cart.concat(cartRaw.filter(function(c){return byId(c.id)&&!cart.some(function(x){return x.id===c.id&&(x.opt||'')===(c.opt||'')})})).filter(function(c){return byId(c.id)&&!soldOut(c.id,c.col)});cartRaw=[];cart.forEach(function(c){c.qty=Math.min(c.qty,maxQty(c.id,c.col))});saveCart();renderCart()})}
+  function loadStock(){return loadCatalog().then(function(){return api.stock()}).then(function(m){STOCK=m;saveCache()},function(){}).then(function(){GRID_LOADING=false;renderGrid();cart=cart.concat(cartRaw.filter(function(c){return byId(c.id)&&!cart.some(function(x){return x.id===c.id&&(x.opt||'')===(c.opt||'')})})).filter(function(c){return byId(c.id)&&!soldOut(c.id,c.opt||undefined)});cartRaw=[];cart.forEach(function(c){c.qty=Math.min(c.qty,maxQty(c.id,c.opt||undefined))});saveCart();renderCart()})}
 
   var cartRaw = store.get('mg_cart',[]);
   var cart = cartRaw.filter(function(c){return byId(c.id)});
@@ -808,15 +816,15 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 
   /* ---------- cart ---------- */
   function saveCart(){store.set('mg_cart',cart)}
-  function inCart(id,col){return cart.filter(function(c){return c.id===id&&(c.col||'')===(col||'')}).reduce(function(n,c){return n+c.qty},0)}
-  function addToCart(id,q,opt,col){
-    opt=opt||'';col=col||'';
-    if(soldOut(id,col||undefined)) return toast(byId(id).name+' дууссан байна');
-    var room=maxQty(id,col||undefined)-inCart(id,col);
+  function inCart(id,opt){return cart.filter(function(c){return c.id===id&&(c.opt||'')===(opt||'')}).reduce(function(n,c){return n+c.qty},0)}
+  function addToCart(id,q,opt){
+    opt=opt||'';
+    if(soldOut(id,opt||undefined)) return toast(byId(id).name+(opt?' ('+opt+')':'')+' дууссан байна');
+    var room=maxQty(id,opt||undefined)-inCart(id,opt);
     if(room<=0) return toast('Нөөц хүрэлцэхгүй байна');
     q=Math.min(q,room);
     var l = cart.filter(function(c){return c.id===id&&(c.opt||'')===opt})[0];
-    if(l) l.qty+=q; else cart.push({id:id,qty:q,opt:opt,col:col});
+    if(l) l.qty+=q; else cart.push({id:id,qty:q,opt:opt});
     saveCart(); renderCart();
     toast(byId(id).name + ' сагсанд нэмэгдлээ');
   }
@@ -874,22 +882,28 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     var q=1;
     $('#qvDec').onclick=function(){q=Math.max(1,q-1);$('#qvQty').textContent=q};
     var ci=0,ki=0;
-    var colName=function(){return (p.colors&&p.colors.length)?p.colors[ci].n:undefined};
-    $('#qvInc').onclick=function(){q=Math.min(maxQty(id,colName())||1,q+1);$('#qvQty').textContent=q};
+    var optFor=function(a,b){var o=[];if(p.colors&&p.colors.length)o.push(p.colors[a].n);if(p.conns&&p.conns.length)o.push(p.conns[b]);return o.join(', ')};
+    var optStr=function(){return optFor(ci,ki)};
+    var nc=(p.colors&&p.colors.length)||1, nk=(p.conns&&p.conns.length)||1;
+    var gone=function(a,b){var o=optFor(a,b);return !!o&&soldOut(id,o)};
+    $('#qvInc').onclick=function(){q=Math.min(maxQty(id,optStr()||undefined)||1,q+1);$('#qvQty').textContent=q};
     var refresh=function(){
-      var cn=colName(), so=soldOut(id,cn), mx=Math.max(1,maxQty(id,cn));
+      var o=optStr(), so=o?soldOut(id,o):soldOut(id), mx=Math.max(1,maxQty(id,o||undefined));
       q=Math.min(q,mx);$('#qvQty').textContent=q;
       [['#qvAdd','Сагсанд нэмэх'],['#qvNow','Шууд захиалах']].forEach(function(x){var el=$(x[0]);if(el){el.disabled=so;el.textContent=so?'Дууссан':x[1]}});
-      $$('[data-col]').forEach(function(b){var c=p.colors[+b.getAttribute('data-col')];b.textContent=c.n+(soldOut(id,c.n)?' (дууссан)':'')});
+      $$('[data-col]').forEach(function(b){var i=+b.getAttribute('data-col'),all=true;for(var j=0;j<nk;j++){if(!gone(i,j))all=false}b.textContent=p.colors[i].n+(all?' (дууссан)':'')});
+      $$('[data-cn]').forEach(function(b){var j=+b.getAttribute('data-cn');b.textContent=p.conns[j]+(gone(ci,j)?' (дууссан)':'')});
     };
-    var optStr=function(){var o=[];if(p.colors&&p.colors.length)o.push(p.colors[ci].n);if(p.conns&&p.conns.length)o.push(p.conns[ki]);return o.join(', ')};
     var showCol=function(){var u=(p.colors&&p.colors[ci]&&p.colors[ci].img)||p.img;$('#qvPh').innerHTML=u?'<img src="'+esc(u)+'" alt="'+esc(p.name)+'">':pic(p)};
-    if(p.colors&&p.colors.length){var f0=p.colors.findIndex(function(c){return !soldOut(id,c.n)});if(f0>0){ci=f0;$$('[data-col]').forEach(function(b,i){b.setAttribute('aria-pressed',String(i===f0))})}showCol()}
+    (function(){for(var i=0;i<nc;i++){for(var j=0;j<nk;j++){if(!gone(i,j)){ci=i;ki=j;return}}}})();
+    $$('[data-col]').forEach(function(b,i){b.setAttribute('aria-pressed',String(i===ci))});
+    $$('[data-cn]').forEach(function(b,j){b.setAttribute('aria-pressed',String(j===ki))});
+    if(p.colors&&p.colors.length) showCol();
     refresh();
-    $('#qvNow').onclick=function(){openCheckout({id:id,qty:q,opt:optStr(),col:colName()||''})};
-    $('#qvAdd').onclick=function(){addToCart(id,q,optStr(),colName()||'');closeModal()};
+    $('#qvNow').onclick=function(){openCheckout({id:id,qty:q,opt:optStr()})};
+    $('#qvAdd').onclick=function(){addToCart(id,q,optStr());closeModal()};
     $$('[data-col]').forEach(function(b){b.onclick=function(){ci=+b.getAttribute('data-col');showCol();refresh();$$('[data-col]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
-    $$('[data-cn]').forEach(function(b){b.onclick=function(){ki=+b.getAttribute('data-cn');$$('[data-cn]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
+    $$('[data-cn]').forEach(function(b){b.onclick=function(){ki=+b.getAttribute('data-cn');refresh();$$('[data-cn]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
   }
 
   /* ---------- auth ---------- */
@@ -1077,7 +1091,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       if(!info.name||!info.phone||!info.address||!info.city)
         return $('#cErr').textContent='Хүргэлт хийхийн тулд бүх талбарыг бөглөнө үү.';
       var btn=$('#coForm button[type="submit"]'); btn.disabled=true; $('#cErr').textContent='';
-      var items=lines.map(function(c){var p=byId(c.id);return {id:p.id,name:p.name+(c.opt?' ('+c.opt+')':''),color:c.col||'',qty:c.qty,price:p.price}});
+      var items=lines.map(function(c){var p=byId(c.id);return {id:p.id,name:p.name+(c.opt?' ('+c.opt+')':''),variant:c.opt||'',qty:c.qty,price:p.price}});
       var amount=sum+dlv;
       api.placeOrder(info,items,amount).then(function(order){
         if(!inst){cart=[]; saveCart(); renderCart();} openOrder=order.id;
@@ -1134,7 +1148,11 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   function renderAdminStock(){
     var rows=[];
     ALLP.forEach(function(p){
-      if(p.colors&&p.colors.length) p.colors.forEach(function(c){rows.push({p:p,key:p.id+'|'+c.n,label:p.name+' — '+c.n,img:c.img||p.img})});
+      var cb=combos(p);
+      if(cb.length) cb.forEach(function(o){
+        var ci=(p.colors||[]).filter(function(c){return o.split(', ')[0]===c.n})[0];
+        rows.push({p:p,key:p.id+'|'+o,label:p.name+' — '+o,img:(ci&&ci.img)||p.img,inherit:STOCK[p.id+'|'+o]===undefined&&stockOf(p.id,o)!==undefined});
+      });
       else rows.push({p:p,key:String(p.id),label:p.name,img:p.img});
     });
     $('#adminStock').innerHTML=rows.map(function(r){
@@ -1142,7 +1160,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       return '<div class="aorder" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="width:52px;height:52px;flex:none;background:var(--block);display:flex;align-items:center;justify-content:center;overflow:hidden">'+(r.img?'<img src="'+esc(r.img)+'" alt="" style="max-width:100%;max-height:100%;object-fit:contain">':'')+'</span>'+
         '<span style="flex:1;min-width:160px">'+esc(r.label)+' <span class="mono mute">'+fmt(p.price)+'</span>'+(p.hidden?' <b class="mute">(нуусан)</b>':'')+'</span>'+
         '<button class="link" type="button" data-tip="Барааны мэдээлэл, зургийг засах" data-pedit="'+p.id+'">Засах</button>'+
-        '<span class="mute">'+(q===undefined?'Тоо оруулаагүй':q<=0?'Дууссан':'Үлдсэн')+'</span>'+
+        '<span class="mute">'+(q===undefined?(r.inherit?'Өнгө/барааны нийт тоо ашиглаж байна':'Тоо оруулаагүй'):q<=0?'Дууссан':'Үлдсэн')+'</span>'+
         '<input type="number" min="0" step="1" inputmode="numeric" data-stock-in="'+esc(r.key)+'" value="'+(q===undefined?'':q)+'" style="width:90px;padding:8px;border:1px solid var(--line);font:inherit" aria-label="Үлдэгдэл: '+esc(r.label)+'">'+
         '<button class="link" type="button" data-tip="Үлдэгдлийг хадгалах" data-stock-save="'+esc(r.key)+'">Хадгалах</button></div>';
     }).join('');
@@ -1280,7 +1298,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     var d=function(k){return parseInt(t.getAttribute(k),10)};
     if(t.hasAttribute('data-add')){var ap=byId(d('data-add'));if(ap&&((ap.colors&&ap.colors.length)||(ap.conns&&ap.conns.length)))quickView(ap.id);else addToCart(d('data-add'),1)}
     else if(t.hasAttribute('data-qv')) quickView(d('data-qv'));
-    else if(t.hasAttribute('data-inc')){var l=cart.filter(function(c){return c.id===d('data-inc')&&(c.opt||'')===(t.getAttribute('data-o')||'')})[0];if(l&&inCart(l.id,l.col)<maxQty(l.id,l.col||undefined))l.qty++;saveCart();renderCart()}
+    else if(t.hasAttribute('data-inc')){var l=cart.filter(function(c){return c.id===d('data-inc')&&(c.opt||'')===(t.getAttribute('data-o')||'')})[0];if(l&&inCart(l.id,l.opt||'')<maxQty(l.id,l.opt||undefined))l.qty++;saveCart();renderCart()}
     else if(t.hasAttribute('data-dec')){var l2=cart.filter(function(c){return c.id===d('data-dec')&&(c.opt||'')===(t.getAttribute('data-o')||'')})[0];if(l2){l2.qty--;if(l2.qty<1)cart=cart.filter(function(c){return c!==l2})}saveCart();renderCart()}
     else if(t.hasAttribute('data-rm')){cart=cart.filter(function(c){return !(c.id===d('data-rm')&&(c.opt||'')===(t.getAttribute('data-o')||''))});saveCart();renderCart()}
     else if(t.hasAttribute('data-order')){var id=t.getAttribute('data-order');openOrder=(openOrder===id)?null:id;renderOrders()}
