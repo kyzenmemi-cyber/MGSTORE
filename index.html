@@ -1046,6 +1046,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
           btn.disabled=false;
           var em=String((ex&&(ex.message||ex.error_description))||'');
           err.textContent=em==='image'?'Зургийг уншиж чадсангүй. JPG эсвэл PNG зураг сонгоно уу.':
+            /out_of_stock/i.test(em)?'Энэ бараа дууссан тул баримтыг хүлээн авч чадсангүй. Төлбөрөө шилжүүлсэн бол бидэнтэй холбогдоно уу.':
             /not allowed/i.test(em)?'Энэ захиалгад баримт илгээх боломжгүй байна. Захиалгаа шалгана уу.':
             /too large|exceed|size/i.test(em)?'Зураг хэт том байна. Бага хэмжээтэй зураг сонгоно уу.':
             /mime|type/i.test(em)?'Зөвхөн JPG, PNG зураг илгээнэ үү.':
