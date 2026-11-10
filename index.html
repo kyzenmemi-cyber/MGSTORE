@@ -233,6 +233,48 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .sub{display:flex;justify-content:space-between;font-weight:600}
 .empty{padding:48px 0;text-align:center;color:var(--mute)}
 
+/* product + cart pages */
+.pp,.cp{max-width:1100px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-left,0px)) 90px}
+.back{display:inline-block;margin-bottom:18px;font-weight:600}
+.pp-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:start}
+.pp-ph{position:sticky;top:84px;aspect-ratio:1;border:1px solid var(--line)}
+.pp-info{min-width:0}
+.pp h1,.cp h1{margin:6px 0 10px;font-family:var(--cond);font-weight:800;font-variation-settings:"wdth" 70;text-transform:uppercase;line-height:1;font-size:clamp(30px,5vw,46px)}
+.pp-price{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:24px;margin:12px 0 6px}
+.pp-badge{background:#dc2626;color:#fff;font-family:inherit;font-size:12px;font-weight:700;padding:3px 8px;letter-spacing:.04em}
+.pp .rate-line{margin:2px 0}
+.pp-opt{margin-top:20px}
+.pp-opt .sw{gap:8px;flex-wrap:wrap;margin-top:8px}
+.pp-opt .sw button{border:1px solid var(--line);padding:10px 16px;font-weight:600}
+.pp-opt .sw button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.pp-act{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:22px 0 4px}
+.pp-act .qty{margin-top:0}
+.pp-act .qty button{width:44px;height:46px}
+.pp-btns{display:flex;gap:10px;flex:1 1 280px}
+.pp-btns .btn{flex:1;padding:14px 12px}
+.pp-spec{list-style:none;padding:0;margin:26px 0 0;border-top:1px solid var(--line)}
+.pp-spec li{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.pp-spec li:before{content:"";flex:none;width:6px;height:6px;margin-top:9px;background:var(--fg)}
+.pp-notes{display:grid;grid-template-columns:1fr 1fr;margin-top:22px;border:1px solid var(--line)}
+.pp-notes div{padding:14px 16px;display:grid;gap:4px;font-size:14px}
+.pp-notes div+div{border-left:1px solid var(--line)}
+.pp .rev{margin-top:56px;padding-top:28px;border-top:1px solid var(--line)}
+.pp-rel{margin-top:56px}
+.pp-rel h2{margin:0 0 18px;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:26px}
+.cp-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:start;margin-top:18px}
+.cp .line{grid-template-columns:96px 1fr auto}
+.cp .line .ph{width:96px}
+.cp .line h4 a{text-decoration:none}
+.cp .line h4 a:hover{text-decoration:underline}
+.cp-sum{border:1px solid var(--line);padding:22px;display:grid;gap:14px;position:sticky;top:84px}
+.cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
+.cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
+@media (max-width:760px){
+  .pp-grid,.cp-grid{grid-template-columns:1fr;gap:22px}
+  .pp-ph,.cp-sum{position:static}
+  .pp-act{position:sticky;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--bg);margin:18px -16px 0;padding:12px 16px;border-top:1px solid var(--line)}
+}
+
 .modal-wrap{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));visibility:hidden;pointer-events:none}
 .modal-wrap.on{visibility:visible;pointer-events:auto}
 .modal{width:min(480px,100%);max-height:100%;overflow:auto;background:var(--bg);color:var(--fg);border:1px solid var(--fg);padding:28px;opacity:0;transform:translateY(18px) scale(.98);transition:opacity .25s,transform .35s cubic-bezier(.2,.7,.2,1)}
@@ -314,7 +356,7 @@ body{margin:0}
 *{-webkit-tap-highlight-color:transparent}
 a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 :focus-visible{outline:0}
-.chip,.tbtn,.nav a,.tabs button,.sw button,.qty button,.order>button,.drawer header button,.modal button:not(.btn):not(.pick button),[data-close-modal],[data-close-drawer],[data-copy],[data-go]{transition:background .12s,color .12s,border-color .12s}
+.chip,.tbtn,.nav a,.tabs button,.sw button,.qty button,.order>button,.drawer header button,.modal button:not(.btn):not(.pick button),[data-close-modal],[data-copy],[data-go]{transition:background .12s,color .12s,border-color .12s}
 .chip:active,.chip:focus-visible,.tbtn:active,.tbtn:focus-visible,.nav a:active,.nav a:focus-visible,.tabs button:active,.tabs button:focus-visible,.sw button:active,.sw button:focus-visible,.qty button:active,.qty button:focus-visible,.drawer header button:active,.drawer header button:focus-visible,.modal header button:active,.modal header button:focus-visible,[data-close-modal]:active,[data-close-modal]:focus-visible,[data-close-drawer]:active,[data-close-drawer]:focus-visible,[data-copy]:active,[data-copy]:focus-visible{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .chip:active .count-pill,.tbtn:active .count-pill{background:var(--bg);color:var(--fg)}
 .order>button:active,.order>button:focus-visible{background:var(--fg);color:var(--bg)}
@@ -439,6 +481,27 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     </div>
   </section>
 
+  <section id="viewProduct" hidden>
+    <div class="pp" id="productPage"></div>
+  </section>
+
+  <section id="viewCart" hidden>
+    <div class="cp">
+      <a class="link back" href="#home">Дэлгүүр лүү буцах</a>
+      <h1>Сагс</h1>
+      <div class="cp-grid">
+        <div class="lines" id="cartLines"></div>
+        <aside class="cp-sum" aria-label="Захиалгын дэлгэрэнгүй">
+          <h2>Захиалгын дэлгэрэнгүй</h2>
+          <div class="sub"><span>Бараа</span><span id="subtotal" class="mono">0₮</span></div>
+          <div class="sub"><span>Хүргэлт</span><span id="cartShip" class="mono">0₮</span></div>
+          <div class="sub tot"><span>Нийт дүн</span><span id="cartTotal" class="mono">0₮</span></div>
+          <button class="btn block" type="button" id="checkoutBtn">Захиалах</button>
+        </aside>
+      </div>
+    </div>
+  </section>
+
   <section id="viewPayment" hidden>
     <div class="wrap profile">
       <h1>Төлбөр</h1>
@@ -495,17 +558,6 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   </div>
 </aside>
 
-<aside class="drawer" id="drawer" aria-label="Сагс" aria-hidden="true">
-  <header>
-    <h2>Сагс</h2>
-    <button class="tbtn" type="button" data-close-drawer>Хаах</button>
-  </header>
-  <div class="lines" id="cartLines"></div>
-  <div class="foot">
-    <div class="sub"><span>Нийт дүн</span><span id="subtotal" class="mono">0₮</span></div>
-    <button class="btn block" type="button" id="checkoutBtn">Захиалах</button>
-  </div>
-</aside>
 
 <div class="modal-wrap" id="modalWrap">
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></div>
@@ -786,7 +838,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   remote.stock=function(){return sb.from('stock').select('product_id,variant,qty').then(function(r){if(r.error)throw r.error;var m={};r.data.forEach(function(x){m[x.variant?x.product_id+'|'+x.variant:x.product_id]=x.qty});return m})};
   remote.adminSetStock=function(key,q){var k=String(key),i=k.indexOf('|');return sb.from('stock').upsert({product_id:parseInt(k,10),variant:i>0?k.slice(i+1):'',qty:q,updated_at:new Date().toISOString()},{onConflict:'product_id,variant'}).then(function(r){if(r.error)throw r.error})};
   local.adminSetStock=function(){return Promise.reject(new Error('admin only'))};
-  function loadStock(){return loadCatalog().then(function(){return api.stock()}).then(function(m){STOCK=m;saveCache()},function(){}).then(function(){GRID_LOADING=false;renderGrid();cart=cart.concat(cartRaw.filter(function(c){return byId(c.id)&&!cart.some(function(x){return x.id===c.id&&(x.opt||'')===(c.opt||'')})})).filter(function(c){return byId(c.id)&&!soldOut(c.id,c.opt||undefined)});cartRaw=[];cart.forEach(function(c){c.qty=Math.min(c.qty,maxQty(c.id,c.opt||undefined))});saveCart();renderCart()})}
+  function loadStock(){return loadCatalog().then(function(){return api.stock()}).then(function(m){STOCK=m;saveCache()},function(){}).then(function(){GRID_LOADING=false;renderGrid();if(/^#product\//.test(location.hash))route();cart=cart.concat(cartRaw.filter(function(c){return byId(c.id)&&!cart.some(function(x){return x.id===c.id&&(x.opt||'')===(c.opt||'')})})).filter(function(c){return byId(c.id)&&!soldOut(c.id,c.opt||undefined)});cartRaw=[];cart.forEach(function(c){c.qty=Math.min(c.qty,maxQty(c.id,c.opt||undefined))});saveCart();renderCart()})}
 
   var cartRaw = store.get('mg_cart',[]);
   var cart = cartRaw.filter(function(c){return byId(c.id)});
@@ -859,14 +911,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var LIST=viewList(); renderFilters();
     $('#prodCount').textContent = LIST.length + ' бараа';
     if(!LIST.length){$('#grid').innerHTML='<div class="empty" style="grid-column:1/-1;text-align:left">Энэ төрөлд бараа алга.</div>';return}
-    $('#grid').innerHTML = LIST.map(function(p){
+    $('#grid').innerHTML = LIST.map(cardHtml).join('');
+  }
+  function cardHtml(p){
       return '<article class="card">'+
         '<button class="ph" type="button" data-qv="'+p.id+'" aria-label="Түргэн харах: '+esc(p.name)+'">'+pic(p)+'</button>'+
         '<div class="row"><h3>'+esc(p.name)+'</h3><span class="price">'+priceHtml(p)+'</span></div>'+
         rateLine(p.id)+leftHtml(leftOf(p.id))+
         (soldOut(p.id)?'<button class="add" type="button" disabled style="opacity:.55;cursor:default;border-bottom-color:transparent">Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">Сагсанд нэмэх</button>')+
       '</article>';
-    }).join('');
   }
 
   /* ---------- cart ---------- */
@@ -890,16 +943,17 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var n = cart.reduce(function(s,c){return s+c.qty},0);
     $('#cartCount').textContent = n; $('#menuBadge').textContent = n; $('#menuBadge').hidden = !n; if(typeof updateTabs==='function')updateTabs();
     $('#subtotal').textContent = fmt(total());
+    var shp=n?delivery():0; $('#cartShip').textContent=n?(shp?fmt(shp):'Үнэгүй'):fmt(0); $('#cartTotal').textContent=fmt(total()+shp);
     $('#checkoutBtn').disabled = !n;
     $('#cartLines').innerHTML = n ? cart.map(function(c){
       var p = byId(c.id);
-      return '<div class="line"><div class="ph">'+linePic(c,p)+'</div><div><h4>'+esc(p.name)+'</h4>'+(c.opt?'<div class="fine" style="margin:0 0 6px">'+esc(c.opt)+'</div>':'')+
+      return '<div class="line"><div class="ph">'+linePic(c,p)+'</div><div><h4><a href="#product/'+p.id+'">'+esc(p.name)+'</a></h4>'+(c.opt?'<div class="fine" style="margin:0 0 6px">'+esc(c.opt)+'</div>':'')+
         '<div class="qty"><button type="button" data-dec="'+p.id+'" data-o="'+esc(c.opt||'')+'" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output>'+c.qty+'</output><button type="button" data-inc="'+p.id+'" data-o="'+esc(c.opt||'')+'" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div></div>'+
         '<div style="text-align:right"><div class="mono">'+fmt(p.price*c.qty)+'</div><button class="link" type="button" data-rm="'+p.id+'" data-o="'+esc(c.opt||'')+'" data-tip="Сагснаас хасах" style="font-size:12px;margin-top:10px">Хасах</button></div></div>';
     }).join('') : '<div class="empty">Таны сагс хоосон байна.</div>';
   }
-  function lockOff(){if(!modalOpen()&&!$('#drawer').classList.contains('on')&&!$('#menu').classList.contains('on')){$('#scrim').classList.remove('on');document.body.classList.remove('locked')}}
-  function openDrawer(){setTimeout(function(){updateTabs()},0);lastFocus=document.activeElement;$('#drawer').classList.add('on');$('#drawer').setAttribute('aria-hidden','false');$('#scrim').classList.add('on');document.body.classList.add('locked');setTimeout(function(){var b=$('[data-close-drawer]');b&&b.focus()},60)}
+  function lockOff(){if(!modalOpen()&&!$('#menu').classList.contains('on')){$('#scrim').classList.remove('on');document.body.classList.remove('locked')}}
+  function openDrawer(){location.hash='cart'}
   function openMenu(){lastFocus=document.activeElement;$('#menu').classList.add('on');$('#menu').setAttribute('aria-hidden','false');$('#menuBtn').setAttribute('aria-expanded','true');$('#scrim').classList.add('on');document.body.classList.add('locked');setTimeout(function(){$('#menuClose').focus()},60)}
   function closeMenu(restore){$('#menu').classList.remove('on');$('#menu').setAttribute('aria-hidden','true');$('#menuBtn').setAttribute('aria-expanded','false');lockOff();if(restore!==false&&lastFocus&&lastFocus.focus)lastFocus.focus()}
   function setTheme(t,save){
@@ -907,7 +961,6 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     $('#themeBtn').setAttribute('aria-checked',String(t==='dark'));
     if(save) store.set('mg_theme',t);
   }
-  function closeDrawer(restore){setTimeout(function(){updateTabs()},0);$('#drawer').classList.remove('on');$('#drawer').setAttribute('aria-hidden','true');lockOff();if(restore!==false&&lastFocus&&lastFocus.focus)lastFocus.focus()}
 
   /* ---------- modal ---------- */
   function modalOpen(){return $('#modalWrap').classList.contains('on')}
@@ -922,17 +975,26 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     if(lastFocus&&lastFocus.focus)lastFocus.focus();
   }
 
-  function quickView(id){
-    var p = byId(id);
-    openModal('<div class="qv-grid"><div class="ph" id="qvPh">'+pic(p)+'</div><div>'+
-      '<button class="x link" type="button" data-close-modal>Хаах</button>'+
-      '<h2 id="modalTitle">'+esc(p.name)+'</h2>'+
-      '<p class="mono" style="font-size:16px;margin:8px 0 14px">'+priceHtml(p)+'</p>'+
-      '<p class="mute" style="white-space:pre-line">'+esc(p.desc)+'</p>'+
-      (p.colors&&p.colors.length?'<div class="mono mute" style="font-size:12px;margin:16px 0 6px">Өнгө</div><div class="sw">'+p.colors.map(function(c,i){return '<button type="button" data-col="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c.n)+'</button>'}).join('')+'</div>':'')+
-      (p.conns&&p.conns.length?'<div class="mono mute" style="font-size:12px;margin:16px 0 6px">Холбогч</div><div class="sw">'+p.conns.map(function(c,i){return '<button type="button" data-cn="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c)+'</button>'}).join('')+'</div>':'')+
-      '<div id="qvLeft" style="margin-top:14px"></div><div class="qty" style="margin:18px 0"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
-      '<button class="btn block" type="button" id="qvAdd">Сагсанд нэмэх</button><button class="btn block" type="button" id="qvNow" style="margin-top:10px">Шууд захиалах</button>'+'</div></div><section class="rev" id="revBox"></section>',true);
+  function quickView(id){if(location.hash==='#product/'+id)renderProduct(id);else location.hash='product/'+id}
+  function renderProduct(id){
+    var p = byId(id), pct = p.old>p.price?Math.round((1-p.price/p.old)*100):0;
+    var rel = PRODUCTS.filter(function(x){return x.id!==id&&(x.cat||'Бусад')===(p.cat||'Бусад')}).slice(0,4);
+    if(rel.length<4) rel=rel.concat(PRODUCTS.filter(function(x){return x.id!==id&&rel.indexOf(x)<0}).slice(0,4-rel.length));
+    var lines =String(p.desc||'').split('\n').map(function(x){return x.trim()}).filter(Boolean);
+    $('#productPage').innerHTML='<a class="link back" href="#home" data-back>Бүх бараа</a><div class="pp-grid"><div class="ph pp-ph" id="qvPh">'+pic(p)+'</div><div class="pp-info">'+
+      (p.cat?'<div class="mono mute">'+esc(p.cat)+'</div>':'')+
+      '<h1>'+esc(p.name)+'</h1>'+rateLine(p.id)+
+      '<div class="pp-price">'+priceHtml(p)+(pct>0?'<span class="pp-badge">-'+pct+'%</span>':'')+'</div>'+
+      (p.colors&&p.colors.length?'<div class="pp-opt"><div class="mono mute">Өнгө</div><div class="sw">'+p.colors.map(function(c,i){return '<button type="button" data-col="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c.n)+'</button>'}).join('')+'</div></div>':'')+
+      (p.conns&&p.conns.length?'<div class="pp-opt"><div class="mono mute">Холбогч</div><div class="sw">'+p.conns.map(function(c,i){return '<button type="button" data-cn="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c)+'</button>'}).join('')+'</div></div>':'')+
+      '<div id="qvLeft" style="margin-top:16px"></div>'+
+      '<div class="pp-act"><div class="qty"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
+      '<div class="pp-btns"><button class="btn ghost" type="button" id="qvAdd">Сагсанд нэмэх</button><button class="btn" type="button" id="qvNow">Шууд захиалах</button></div></div>'+
+      (lines.length?'<ul class="pp-spec">'+lines.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
+      '<div class="pp-notes"><div><b>Хүргэлт</b><span class="mute">'+(FREE_SHIP.indexOf(id)>=0?'Үнэгүй, ':fmt(DELIVERY)+', ')+'12-24 цагийн дотор</span></div><div><b>Төлбөр</b><span class="mute">Банкаар шилжүүлнэ</span></div></div>'+
+      '</div></div><section class="rev" id="revBox"></section>'+
+      (rel.length?'<section class="pp-rel"><h2>Төстэй бараа</h2><div class="grid">'+rel.map(cardHtml).join('')+'</div></section>':'');
+    var bk=$('[data-back]');if(bk)bk.onclick=function(e){if(appNav>1){e.preventDefault();history.back()}};
     renderRev(id);
     var q=1;
     $('#qvDec').onclick=function(){q=Math.max(1,q-1);$('#qvQty').textContent=q};
@@ -957,7 +1019,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     if(p.colors&&p.colors.length) showCol();
     refresh();
     $('#qvNow').onclick=function(){openCheckout({id:id,qty:q,opt:optStr()})};
-    $('#qvAdd').onclick=function(){addToCart(id,q,optStr());closeModal()};
+    $('#qvAdd').onclick=function(){addToCart(id,q,optStr())};
     $$('[data-col]').forEach(function(b){b.onclick=function(){ci=+b.getAttribute('data-col');showCol();refresh();$$('[data-col]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
     $$('[data-cn]').forEach(function(b){b.onclick=function(){ki=+b.getAttribute('data-cn');refresh();$$('[data-cn]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
   }
@@ -1127,8 +1189,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function openCheckout(inst){
     var lines=inst&&inst.id?[inst]:cart; inst=inst&&inst.id?inst:null;
     if(!lines.length) return toast('Таны сагс хоосон байна');
-    if(!user){if(inst)pendingInstant=inst;else pendingCheckout=true;closeDrawer(false);return openAuth('Захиалахын тулд нэвтэрнэ үү')}
-    closeDrawer(false);
+    if(!user){if(inst)pendingInstant=inst;else pendingCheckout=true;return openAuth('Захиалахын тулд нэвтэрнэ үү')}
     var dlv=delivery(lines), sum=lines.reduce(function(s,c){return s+byId(c.id).price*c.qty},0);
     var rows=lines.map(function(c){var p=byId(c.id);return '<div><span>'+esc(p.name)+(c.opt?' ('+esc(c.opt)+')':'')+' × '+c.qty+'</span><span class="mono">'+fmt(p.price*c.qty)+'</span></div>'}).join('');
     openModal('<button class="x link" type="button" data-close-modal>Хаах</button><h2 id="modalTitle">Захиалга өгөх</h2>'+
@@ -1364,8 +1425,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   /* ---------- bottom tab bar ---------- */
   var shopTab=false;
   function updateTabs(){
-    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='admin'?'':(shopTab?'shop':'home'));
-    if($('#drawer').classList.contains('on')) cur='cart';
+    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':h==='cart'?'cart':/^product\//.test(h)?'shop':(h==='admin'?'':(shopTab?'shop':'home'));
     $$('.tab').forEach(function(t){if(t.getAttribute('data-tab')===cur)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
     var n=cart.reduce(function(a,c){return a+c.qty},0); $('#tabBadge').textContent=n; $('#tabBadge').hidden=!n;
     var ic=$('#tabAccIc');
@@ -1381,18 +1441,30 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   window.addEventListener('hashchange',function(){if(location.hash!=='#home'&&location.hash!=='')shopTab=false;updateTabs()});
 
   /* ---------- routing ---------- */
+  var appNav=0, prevV='home', homeY=0, TITLE0=document.title;
   function route(){
-    var h=location.hash.replace('#','');
+    var h=location.hash.replace('#',''), parts=h.split('/'), v=parts[0];
     if(h==='profile'&&!user){location.hash='home';openAuth('Захиалгаа харахын тулд нэвтэрнэ үү');return}
     if(h==='admin'&&!isAdmin){location.hash='home';return}
-    $('#viewHome').hidden=(h==='profile'||h==='payment'||h==='admin');
-    $('#viewProfile').hidden=(h!=='profile');
-    $('#viewPayment').hidden=(h!=='payment');
-    $('#viewAdmin').hidden=(h!=='admin');
-    if(h==='admin') loadAdmin();
-    if(h==='profile') renderProfile();
-    if(h==='payment'){$('#payPage').innerHTML=payBox(null,'')+'<div id="proofBox"></div>';renderProof()}
-    if(h==='profile'||h==='payment'||h==='admin') window.scrollTo(0,0);
+    var pid=v==='product'?parseInt(parts[1],10):0, pp=pid?byId(pid):null;
+    if(v==='product'&&!pp&&!GRID_LOADING){location.hash='home';return}
+    appNav++;
+    var home=!(v==='profile'||v==='payment'||v==='admin'||v==='cart'||v==='product');
+    if(prevV==='home'&&!home) homeY=window.scrollY;
+    $('#viewHome').hidden=!home;
+    $('#viewProfile').hidden=(v!=='profile');
+    $('#viewPayment').hidden=(v!=='payment');
+    $('#viewAdmin').hidden=(v!=='admin');
+    $('#viewCart').hidden=(v!=='cart');
+    $('#viewProduct').hidden=(v!=='product');
+    document.title=pp?pp.name+' — '+TITLE0:TITLE0;
+    if(v==='admin') loadAdmin();
+    if(v==='profile') renderProfile();
+    if(v==='payment'){$('#payPage').innerHTML=payBox(null,'')+'<div id="proofBox"></div>';renderProof()}
+    if(v==='cart') renderCart();
+    if(v==='product'){if(pp)renderProduct(pid);else $('#productPage').innerHTML='<div class="sk" style="aspect-ratio:2/1"></div>'}
+    if(!home) window.scrollTo(0,0); else if(prevV!=='home') window.scrollTo(0,homeY);
+    prevV=home?'home':v;
     updateTabs();
   }
 
@@ -1407,7 +1479,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       if(!(qv>=0)) return toast('Тоог 0 эсвэл түүнээс их бүхэл тоогоор оруулна уу.');
       var prevQ=STOCK[sid]; STOCK[sid]=qv; renderAdminStock(); renderGrid(); toast((byId(parseInt(sid,10))?byId(parseInt(sid,10)).name:'Бараа')+(String(sid).indexOf('|')>0?' — '+String(sid).split('|').slice(1).join('|'):'')+': '+qv+' ширхэг боллоо');
       api.adminSetStock(sid,qv).then(function(){saveCache()},function(){if(prevQ===undefined)delete STOCK[sid];else STOCK[sid]=prevQ;renderAdminStock();renderGrid();toast('Хадгалж чадсангүй. Өмнөх тоонд буцаалаа.')});return}
-    var t=e.target.closest('[data-add],[data-qv],[data-inc],[data-dec],[data-rm],[data-order],[data-go],[data-close-modal],[data-close-drawer],[data-copy],[data-recv],[data-afilter],[data-aset]');
+    var t=e.target.closest('[data-add],[data-qv],[data-inc],[data-dec],[data-rm],[data-order],[data-go],[data-close-modal],[data-copy],[data-recv],[data-afilter],[data-aset]');
     if(!t) return;
     var d=function(k){return parseInt(t.getAttribute(k),10)};
     if(t.hasAttribute('data-add')){var ap=byId(d('data-add'));if(ap&&((ap.colors&&ap.colors.length)||(ap.conns&&ap.conns.length)))quickView(ap.id);else addToCart(d('data-add'),1)}
@@ -1417,7 +1489,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     else if(t.hasAttribute('data-rm')){cart=cart.filter(function(c){return !(c.id===d('data-rm')&&(c.opt||'')===(t.getAttribute('data-o')||''))});saveCart();renderCart()}
     else if(t.hasAttribute('data-order')){var id=t.getAttribute('data-order');openOrder=(openOrder===id)?null:id;renderOrders()}
     else if(t.hasAttribute('data-go')){
-      e.preventDefault(); if(/^#(profile|payment|admin)$/.test(location.hash)) location.hash='home';
+      e.preventDefault(); if(/^#(profile|payment|admin|cart|product\/\d+)$/.test(location.hash)) location.hash='home';
       setTimeout(function(){var el=document.getElementById(t.getAttribute('data-go'));el&&el.scrollIntoView({behavior:'smooth'})},30);
     }
     else if(t.hasAttribute('data-recv')){
@@ -1443,12 +1515,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       try{navigator.clipboard.writeText(v).then(ok,no)}catch(x){no()}
     }
     else if(t.hasAttribute('data-close-modal')) closeModal();
-    else if(t.hasAttribute('data-close-drawer')) closeDrawer();
   });
   // tooltips: Esc hides them, they come back on the next hover or focus
   document.addEventListener('keydown',function(e){if(e.key==='Escape')document.body.classList.add('tip-off')});
   ['mouseover','focusin'].forEach(function(ev){document.addEventListener(ev,function(){document.body.classList.remove('tip-off')},true)});
-  $('#scrim').addEventListener('click',function(){if(modalOpen())closeModal();else if($('#drawer').classList.contains('on'))closeDrawer();else closeMenu()});
+  $('#scrim').addEventListener('click',function(){if(modalOpen())closeModal();else closeMenu()});
   $('#menuBtn').onclick=function(){$('#menu').classList.contains('on')?closeMenu():openMenu()};
   $('#menuClose').onclick=function(){closeMenu()};
   $('#menuSignOut').onclick=function(){closeMenu(false);signOut()};
@@ -1463,7 +1534,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   $('#brand').addEventListener('click',function(e){e.preventDefault();location.hash='home';window.scrollTo({top:0,behavior:'smooth'})});
   window.addEventListener('hashchange',route);
   document.addEventListener('keydown',function(e){
-    if(e.key==='Escape'){if(modalOpen())closeModal();else if($('#drawer').classList.contains('on'))closeDrawer();else if($('#menu').classList.contains('on'))closeMenu()}
+    if(e.key==='Escape'){if(modalOpen())closeModal();else if($('#menu').classList.contains('on'))closeMenu()}
     if(e.key==='Tab'&&modalOpen()){
       var f=$$('button,input,a[href]',$('#modal')).filter(function(x){return !x.disabled});
       if(!f.length)return; var a=f[0],b=f[f.length-1];
@@ -1474,7 +1545,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
   /* ---------- welcome popup (once per browser) ---------- */
   function welcome(){
-    if(store.get('mg_welcome',false)||modalOpen()||$('#drawer').classList.contains('on')) return;
+    if(store.get('mg_welcome',false)||modalOpen()) return;
     store.set('mg_welcome',true);
     openModal('<button class="x link" type="button" data-close-modal>Хаах</button>'+
       '<p class="mono mute" style="margin:0 0 10px">Тавтай морил</p>'+
