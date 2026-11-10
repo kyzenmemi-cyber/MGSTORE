@@ -165,10 +165,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
 /* card press and hover: the picture lifts and gets a soft shadow */
-.card .ph{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none}
-.card:hover .ph,.card .ph:focus-visible,.card .ph:active{transform:scale(1.045);box-shadow:0 12px 28px rgba(0,0,0,.16);position:relative;z-index:2}
-.card .ph:active{transform:scale(1.025)}
-@media (prefers-reduced-motion:reduce){.card .ph{transition:none}.card:hover .ph,.card .ph:active{transform:none}}
 /* filter and sort buttons */
 .filters{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:0 0 24px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;min-width:0}
@@ -189,21 +185,45 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 [data-tip]::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:var(--fg);color:var(--bg);font:500 12px/1.3 var(--mono);padding:6px 9px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .12s;z-index:60}
 [data-tip]:hover::after,[data-tip]:focus-visible::after{opacity:1}
 body.tip-off [data-tip]::after{opacity:0!important}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 20px;padding-bottom:64px}
-.card{min-width:0;display:flex;flex-direction:column;gap:12px}
-.card .ph{width:100%;cursor:pointer}
-.card .ph .qv{position:absolute;left:0;right:0;bottom:0;padding:12px;background:var(--fg);color:var(--bg);text-align:center;transform:translateY(101%);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
-.card:hover .ph .qv,.card .ph:focus-visible .qv{transform:none}
-.card .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;align-items:baseline}
-.card h3{margin:0;font-size:15px;font-weight:600}
-.card .price{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 14px;padding-bottom:64px}
+@media (min-width:760px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 20px}}
+@media (min-width:1100px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{min-width:0;display:flex;flex-direction:column;gap:0}
+.media{position:relative}
+.card .ph{width:100%;cursor:pointer;aspect-ratio:1;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,#fff 62%,#eee 100%)}
+.card .ph img{padding:6%;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.card:hover .ph img{transform:scale(1.06) rotate(-1.5deg)}
+.card .ph::after{content:"";position:absolute;left:18%;right:18%;bottom:11%;height:10px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent);pointer-events:none}
+.card .ph .qv{display:none}
+.badge{position:absolute;left:10px;top:10px;z-index:3;padding:4px 9px;border-radius:999px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.02em;background:var(--fg);color:var(--bg);pointer-events:none}
+.badge.sale-b{background:#16a34a;color:#fff}
+.badge.low-b{background:#dc2626;color:#fff}
+.heart{position:absolute;right:8px;top:8px;z-index:3;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);color:#111;box-shadow:0 1px 6px rgba(0,0,0,.14);-webkit-tap-highlight-color:transparent;transition:transform .15s}
+.heart svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round}
+.heart[aria-pressed="true"]{color:#e11d48}
+.heart[aria-pressed="true"] svg{fill:currentColor}
+.heart:active{transform:scale(.88)}
+.dots{position:absolute;left:0;right:0;bottom:10px;z-index:3;display:flex;justify-content:center;gap:2px;pointer-events:none}
+.dots button{pointer-events:auto;width:22px;height:22px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
+.dots button::before{content:"";width:8px;height:8px;border-radius:50%;background:#c4c4c4;transition:transform .2s,background .2s}
+.dots button[aria-pressed="true"]::before{background:#111;transform:scale(1.25)}
+.cbody{padding:12px 2px 0;display:flex;flex-direction:column;gap:5px;flex:1}
+.ccat{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.card h3{margin:0;font-size:15px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
+.card .price{font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .prow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card .rate-line{min-height:0;font-size:12px}
+.card .add{margin-top:10px;width:100%;height:44px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--fg);transition:transform .15s,opacity .2s}
+.card .add svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.card .add:active{transform:scale(.97)}
+.card .add:disabled{background:transparent;color:var(--mute);border-color:var(--line);cursor:default}
+@media (max-width:420px){.card .add{height:42px;font-size:14px}.card h3{font-size:14px}}
+@media (prefers-reduced-motion:reduce){.card .ph img,.heart,.card .add{transition:none}.card:hover .ph img{transform:none}}
 /* discount: new price green, old price crossed out with a red line */
 .sale{color:#16a34a;font-weight:700}
 .left{display:block;margin:2px 0 8px;font-size:12px;color:var(--mute)}
 .left.low{color:#dc2626;font-weight:600}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
-.card .add{align-self:flex-start;font-weight:600;border-bottom:1px solid var(--fg);padding-bottom:1px}
-.card .add:hover{border-bottom-width:2px}
 
 .info{border-block:1px solid var(--line)}
 .info .wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -760,15 +780,19 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var STOCK = {};
   var GRID_LOADING = !!sb;
   var CATS_ORDER=['Powerbank','Чихэвч','Сэнс','Салаалагч','Хуруувч','PC сет','Гар дулаацуулагч','Нүдний шил','Микрофон'];
-  var FILTER='Бүгд', SORT='';
+  var FILTER='Бүгд', SORT='', WISHCAT='♥ Хадгалсан', WISH=(function(){var w=store.get('mg_wish',[]);return Array.isArray(w)?w:[]})();
+  function isWish(id){return WISH.indexOf(id)>=0}
+  function toggleWish(id){var i=WISH.indexOf(id);if(i>=0)WISH.splice(i,1);else WISH.push(id);store.set('mg_wish',WISH);toast(i>=0?'Хадгалснаас хасагдлаа':'Хадгалагдлаа ♥');if(FILTER===WISHCAT&&!WISH.length)FILTER='Бүгд';renderGrid()}
+  var SVG_HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.700 3.700 4.500 7 4.500c2 0 3.400 1.100 5 3 1.600-1.900 3-3 5-3 3.300 0 5.300 3.200 4.200 6.600-1.700 4.800-9.200 9.400-9.200 9.400z"/></svg>',
+      SVG_BASKET='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-1.800 10H4.800zM8 9l3-5M16 9l-3-5"/></svg>';
   function catsNow(){var seen={};PRODUCTS.forEach(function(p){seen[p.cat||'Бусад']=1});var out=CATS_ORDER.filter(function(c){return seen[c]});Object.keys(seen).forEach(function(c){if(out.indexOf(c)<0)out.push(c)});return out}
-  function viewList(){var l=PRODUCTS.filter(function(p){return FILTER==='Бүгд'||(p.cat||'Бусад')===FILTER});if(SORT)l=l.slice().sort(function(a,b){return SORT==='asc'?a.price-b.price:b.price-a.price});return l}
+  function viewList(){var l=PRODUCTS.filter(function(p){return FILTER==='Бүгд'||(FILTER===WISHCAT?isWish(p.id):(p.cat||'Бусад')===FILTER)});if(SORT)l=l.slice().sort(function(a,b){return SORT==='asc'?a.price-b.price:b.price-a.price});return l}
   function renderFilters(){
-    var cats=['Бүгд'].concat(catsNow()); if(cats.indexOf(FILTER)<0) FILTER='Бүгд';
-    $('#filters').innerHTML='<div class="chips" role="group" aria-label="Барааны төрөл">'+cats.map(function(c){return '<button class="chip" type="button" data-cat="'+esc(c)+'" aria-pressed="'+(c===FILTER)+'">'+esc(c)+'</button>'}).join('')+'</div>'+
+    var cats=['Бүгд'].concat(catsNow()); var nw=PRODUCTS.filter(function(p){return isWish(p.id)}).length; if(nw) cats.push(WISHCAT); if(cats.indexOf(FILTER)<0) FILTER='Бүгд';
+    $('#filters').innerHTML='<div class="chips" role="group" aria-label="Барааны төрөл">'+cats.map(function(c){return '<button class="chip" type="button" data-cat="'+esc(c)+'" aria-pressed="'+(c===FILTER)+'">'+esc(c)+(c===WISHCAT?' ('+nw+')':'')+'</button>'}).join('')+'</div>'+
       '<span class="sortgrp"><button class="chip sortbtn" type="button" data-sortp="asc" aria-pressed="'+(SORT==='asc')+'">Үнэ: багаас ихэд</button><button class="chip sortbtn" type="button" data-sortp="desc" aria-pressed="'+(SORT==='desc')+'">Үнэ: ихээс багад</button></span>';
   }
-  function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1"></div><div class="sk sk-line" style="width:70%"></div><div class="sk sk-line" style="width:40%"></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
+  function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="sk sk-line" style="width:70%"></div><div class="sk sk-line" style="width:40%"></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
   function skRows(n){var h='';for(var i=0;i<n;i++)h+='<div class="sk sk-row" aria-hidden="true"></div>';return h}
   // stock is per colour when a colour has its own row (key "id|colour"), otherwise per product (key id)
   function stockOf(id,opt){
@@ -914,11 +938,16 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     $('#grid').innerHTML = LIST.map(cardHtml).join('');
   }
   function cardHtml(p){
+      var gone=soldOut(p.id), left=leftOf(p.id), pct=p.old>p.price?Math.round((1-p.price/p.old)*100):0, rl=revOf(p.id);
+      var badge=gone?'<span class="badge">Дууссан</span>':pct>0?'<span class="badge sale-b">−'+pct+'%</span>':(left!==undefined&&left>0&&left<=3?'<span class="badge low-b">Сүүлийн '+left+'</span>':'');
+      var dots=(p.colors&&p.colors.length>1&&p.colors.some(function(c){return c.img}))?'<div class="dots" role="group" aria-label="Өнгө">'+p.colors.slice(0,6).map(function(c,i){return '<button type="button" data-cc="'+p.id+':'+i+'" aria-label="'+esc(c.n)+'" aria-pressed="'+(i===0)+'"></button>'}).join('')+'</div>':'';
       return '<article class="card">'+
-        '<button class="ph" type="button" data-qv="'+p.id+'" aria-label="Түргэн харах: '+esc(p.name)+'">'+pic(p)+'</button>'+
-        '<div class="row"><h3>'+esc(p.name)+'</h3><span class="price">'+priceHtml(p)+'</span></div>'+
-        rateLine(p.id)+leftHtml(leftOf(p.id))+
-        (soldOut(p.id)?'<button class="add" type="button" disabled style="opacity:.55;cursor:default;border-bottom-color:transparent">Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">Сагсанд нэмэх</button>')+
+        '<div class="media"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
+        '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
+        '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
+        '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
+        '<div class="prow"><span class="price">'+priceHtml(p)+'</span>'+(rl.length?'<span class="rate-line">'+starRow(avgOf(rl))+'<span>'+(Math.round(avgOf(rl)*10)/10)+' ('+rl.length+')</span></span>':'')+'</div>'+
+        (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
 
@@ -1528,6 +1557,14 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   setTheme(store.get('mg_theme','light'),false);
   $('#modalWrap').addEventListener('click',function(e){if(e.target===$('#modalWrap'))closeModal()});
   $('#cartBtn').onclick=openDrawer;
+  document.addEventListener('click',function(e){
+    var w=e.target.closest('[data-wish]'); if(w){e.preventDefault();toggleWish(+w.getAttribute('data-wish'));return}
+    var d=e.target.closest('[data-cc]'); if(d){
+      e.preventDefault();var pr=d.getAttribute('data-cc').split(':'),p=byId(+pr[0]),i=+pr[1],card=d.closest('.card'),img=card&&card.querySelector('.ph img');
+      if(p&&p.colors&&p.colors[i]&&img){img.src=p.colors[i].img||p.img;img.alt=p.name+' '+p.colors[i].n}
+      $$('[data-cc]',d.parentNode).forEach(function(x){x.setAttribute('aria-pressed',String(x===d))});
+    }
+  });
   $('#checkoutBtn').onclick=openCheckout;
   $('#signOut').onclick=signOut;
   $('#accountBtn').onclick=function(){if(user)location.hash='profile';else openAuth()};
