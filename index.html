@@ -326,6 +326,27 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 @media (prefers-reduced-motion:reduce){.brand{transition:none}.brand:hover,.brand:active,.brand:focus-visible{transform:none}}
 .sortgrp{display:flex;gap:8px;flex:none}
 @media (max-width:720px){.sortgrp{align-self:flex-start;flex-wrap:wrap}}
+/* bottom tab bar */
+.tabbar{position:fixed;z-index:40;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:62px;padding:8px 2px;font-size:12px;font-weight:600;color:var(--mute);background:none;border:0;text-decoration:none;cursor:pointer;font-family:inherit}
+.tab .tab-ic{position:relative;width:28px;height:28px;display:grid;place-items:center}
+.tab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tab img{width:28px;height:28px;border-radius:50%;object-fit:cover;display:block;outline:2px solid transparent}
+.tab[aria-current="page"]{color:var(--fg)}
+.tab[aria-current="page"] img{outline-color:var(--fg)}
+.tab[aria-current="page"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--fg)}
+.tab-badge{position:absolute;top:-6px;right:-10px;min-width:18px;height:18px;padding:0 5px;background:var(--fg);color:var(--bg);font-family:var(--mono);font-size:10px;line-height:18px;text-align:center;border-radius:9px}
+.tab-badge[hidden]{display:none}
+.tab:active,.tab:focus-visible{background:var(--fg);color:var(--bg);outline:0}
+.tab:active .tab-badge,.tab:focus-visible .tab-badge{background:var(--bg);color:var(--fg)}
+body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
+.toasts{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+/* profile photo */
+.av-row{display:flex;align-items:center;gap:16px}
+.av{width:84px;height:84px;border-radius:50%;background:var(--block);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;flex:none;font-weight:900;font-size:32px;color:var(--mute)}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av-actions{display:grid;gap:6px;justify-items:start}
+.av-actions .link[hidden]{display:none}
 </style>
 
 </head>
@@ -381,6 +402,14 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       <h1>Миний бүртгэл</h1>
       <div class="p-grid">
         <div class="p-card">
+          <div class="av-row">
+            <div class="av" id="pAv" aria-hidden="true"></div>
+            <div class="av-actions">
+              <button class="btn ghost" type="button" id="avPick">Зураг оруулах</button>
+              <button class="link" type="button" id="avDel" hidden>Зураг устгах</button>
+            </div>
+            <input type="file" id="avFile" accept="image/*" hidden>
+          </div>
           <dl>
             <div><dt>Нэр</dt><dd id="pName"></dd></div>
             <div><dt>И-мэйл</dt><dd id="pEmail"></dd></div>
@@ -430,6 +459,14 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     <span class="mono"><a href="https://www.facebook.com/share/1JHT6my4yf/?mibextid=wwXIfr">Facebook</a> &nbsp; <a href="https://www.instagram.com/mgstore.mn">Instagram</a></span>
   </div>
 </footer>
+
+<nav class="tabbar" id="tabbar" aria-label="Доод цэс">
+  <a class="tab" id="tabHome" href="#home" data-tab="home"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg></span><span>Нүүр</span></a>
+  <button class="tab" id="tabCart" type="button" data-tab="cart"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 3.5h3l2.2 11h10.6l2-8H6.2"/><circle cx="9" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span class="tab-badge" id="tabBadge" hidden>0</span></span><span>Сагс</span></button>
+  <a class="tab" id="tabShop" href="#shop" data-tab="shop" data-go="shop"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 20 7v10l-8 4.2L4 17V7z"/><path d="M4 7l8 4.2L20 7M12 11.2v10"/></svg></span><span>Дэлгүүр</span></a>
+  <a class="tab" id="tabPay" href="#payment" data-tab="payment"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg></span><span>Төлбөр</span></a>
+  <button class="tab" id="tabAcc" type="button" data-tab="account"><span class="tab-ic" id="tabAccIc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.500 2 7.500 6"/></svg></span><span id="tabAccTx">Бүртгэл</span></button>
+</nav>
 
 <div class="scrim" id="scrim"></div>
 
@@ -574,7 +611,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   // With keys (see mgstore-live.html) accounts and orders live in Supabase.
   var SUPABASE_URL = 'https://bblevpisgcakfwczpfwh.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJibGV2cGlzZ2Nha2Z3Y3pwZndoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MDgyOTAsImV4cCI6MjEwODE4NDI5MH0.7-hF7eSwIvnPTTierG_XnV2ICU4LlYHF5Ix40PwevN0';
   var sb = (SUPABASE_URL && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
-  var toUser = function(u){return {id:u.id,email:u.email,name:(u.user_metadata&&u.user_metadata.full_name)||u.email,since:Date.parse(u.created_at)}};
+  var toUser = function(u){return {id:u.id,email:u.email,name:(u.user_metadata&&u.user_metadata.full_name)||u.email,since:Date.parse(u.created_at),avatar:(u.user_metadata&&u.user_metadata.avatar)||''}};
   var local = {
     init:function(){return Promise.resolve(store.get('mg_user',null))},
     signUp:function(name,email,pass){
@@ -586,9 +623,10 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     signIn:function(email,pass){
       var u=store.get('mg_users',{})[email];
       if(!u) return Promise.reject(new Error('Энэ и-мэйлээр бүртгэл олдсонгүй. Эхлээд бүртгүүлнэ үү.'));
-      var us={email:email,name:u.name,since:u.since}; store.set('mg_user',us); return Promise.resolve(us);
+      var us={email:email,name:u.name,since:u.since,avatar:u.avatar||''}; store.set('mg_user',us); return Promise.resolve(us);
     },
     signOut:function(){store.set('mg_user',null);return Promise.resolve()},
+    setAvatar:function(d){var us=store.get('mg_users',{});if(us[user.email]){us[user.email].avatar=d;store.set('mg_users',us)}var cu=store.get('mg_user',null);if(cu){cu.avatar=d;store.set('mg_user',cu)}return Promise.resolve()},
     orders:function(){return Promise.resolve((store.get('mg_orders',{})[user.email])||[])},
     placeOrder:function(info,items,tot){
       var all=store.get('mg_orders',{}); all[user.email]=all[user.email]||[];
@@ -597,6 +635,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     }
   };
   var remote = {
+    setAvatar:function(d){return sb.auth.updateUser({data:{avatar:d}}).then(function(r){if(r.error)throw r.error})},
     init:function(){return sb.auth.getSession().then(function(r){return r.data.session?toUser(r.data.session.user):null})},
     signUp:function(name,email,pass){
       return sb.auth.signUp({email:email,password:pass,options:{data:{full_name:name}}}).then(function(r){
@@ -849,7 +888,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   function total(){return cart.reduce(function(s,c){return s+byId(c.id).price*c.qty},0)}
   function renderCart(){
     var n = cart.reduce(function(s,c){return s+c.qty},0);
-    $('#cartCount').textContent = n; $('#menuBadge').textContent = n; $('#menuBadge').hidden = !n;
+    $('#cartCount').textContent = n; $('#menuBadge').textContent = n; $('#menuBadge').hidden = !n; if(typeof updateTabs==='function')updateTabs();
     $('#subtotal').textContent = fmt(total());
     $('#checkoutBtn').disabled = !n;
     $('#cartLines').innerHTML = n ? cart.map(function(c){
@@ -860,7 +899,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     }).join('') : '<div class="empty">Таны сагс хоосон байна.</div>';
   }
   function lockOff(){if(!modalOpen()&&!$('#drawer').classList.contains('on')&&!$('#menu').classList.contains('on')){$('#scrim').classList.remove('on');document.body.classList.remove('locked')}}
-  function openDrawer(){lastFocus=document.activeElement;$('#drawer').classList.add('on');$('#drawer').setAttribute('aria-hidden','false');$('#scrim').classList.add('on');document.body.classList.add('locked');setTimeout(function(){var b=$('[data-close-drawer]');b&&b.focus()},60)}
+  function openDrawer(){setTimeout(function(){updateTabs()},0);lastFocus=document.activeElement;$('#drawer').classList.add('on');$('#drawer').setAttribute('aria-hidden','false');$('#scrim').classList.add('on');document.body.classList.add('locked');setTimeout(function(){var b=$('[data-close-drawer]');b&&b.focus()},60)}
   function openMenu(){lastFocus=document.activeElement;$('#menu').classList.add('on');$('#menu').setAttribute('aria-hidden','false');$('#menuBtn').setAttribute('aria-expanded','true');$('#scrim').classList.add('on');document.body.classList.add('locked');setTimeout(function(){$('#menuClose').focus()},60)}
   function closeMenu(restore){$('#menu').classList.remove('on');$('#menu').setAttribute('aria-hidden','true');$('#menuBtn').setAttribute('aria-expanded','false');lockOff();if(restore!==false&&lastFocus&&lastFocus.focus)lastFocus.focus()}
   function setTheme(t,save){
@@ -868,7 +907,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     $('#themeBtn').setAttribute('aria-checked',String(t==='dark'));
     if(save) store.set('mg_theme',t);
   }
-  function closeDrawer(restore){$('#drawer').classList.remove('on');$('#drawer').setAttribute('aria-hidden','true');lockOff();if(restore!==false&&lastFocus&&lastFocus.focus)lastFocus.focus()}
+  function closeDrawer(restore){setTimeout(function(){updateTabs()},0);$('#drawer').classList.remove('on');$('#drawer').setAttribute('aria-hidden','true');lockOff();if(restore!==false&&lastFocus&&lastFocus.focus)lastFocus.focus()}
 
   /* ---------- modal ---------- */
   function modalOpen(){return $('#modalWrap').classList.contains('on')}
@@ -980,7 +1019,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
   }
   function syncAccount(){
     $('#accountBtn').textContent = user ? user.name.split(' ')[0]+' · Миний бүртгэл' : 'Нэвтрэх'; $('#menuSignOut').hidden = !user;
-    var done=function(a){isAdmin=a;$('#adminLink').hidden=!a;route()};
+    var done=function(a){isAdmin=a;$('#adminLink').hidden=!a;route();updateTabs()};
     if(user) api.isAdmin().then(done,function(){done(false)}); else done(false);
   }
 
@@ -1147,7 +1186,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     }).join('') : '<div class="empty" style="text-align:left">Захиалга одоогоор алга. Захиалга өгсний дараа энд харагдана.</div>';
   }
   function renderProfile(){
-    $('#pName').textContent=user.name; $('#pEmail').textContent=user.email; $('#pSince').textContent=fdate(user.since||Date.now());
+    renderAvatar(); $('#pName').textContent=user.name; $('#pEmail').textContent=user.email; $('#pSince').textContent=fdate(user.since||Date.now());
     $('#orderCount').textContent='';
     var oc=sb?store.get('mg_oc_'+user.id,null):null;
     if(Array.isArray(oc)){lastOrders=oc;renderOrders()}else $('#orders').innerHTML=skRows(3);
@@ -1285,6 +1324,62 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     }).join(''):'<div class="empty" style="text-align:left">Энд захиалга алга.</div>';
   }
 
+  /* ---------- profile photo ---------- */
+  function avatarImg(src){var im=document.createElement('img');im.alt='';im.src=src;return im}
+  function renderAvatar(){
+    var box=$('#pAv'); if(!box||!user) return;
+    box.innerHTML='';
+    if(user.avatar) box.appendChild(avatarImg(user.avatar)); else box.textContent=(user.name||'?').trim().charAt(0).toUpperCase();
+    $('#avDel').hidden=!user.avatar;
+    $('#avPick').textContent=user.avatar?'Зураг солих':'Зураг оруулах';
+  }
+  function squareJpeg(file,size){
+    return new Promise(function(res,rej){
+      var url=URL.createObjectURL(file), im=new Image();
+      im.onload=function(){
+        var m=Math.min(im.width,im.height), c=document.createElement('canvas'), x=c.getContext('2d');
+        c.width=c.height=size; x.fillStyle='#fff'; x.fillRect(0,0,size,size);
+        x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,size,size);
+        URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.8));
+      };
+      im.onerror=function(){URL.revokeObjectURL(url);rej(new Error('bad image'))};
+      im.src=url;
+    });
+  }
+  function saveAvatar(d){
+    var prev=user.avatar||''; user.avatar=d; renderAvatar(); updateTabs();
+    return api.setAvatar(d).then(function(){toast(d?'Профайл зураг хадгалагдлаа':'Профайл зураг устлаа')},function(){
+      user.avatar=prev; renderAvatar(); updateTabs(); toast('Хадгалж чадсангүй. Дахин оролдоно уу.');
+    });
+  }
+  $('#avPick').onclick=function(){$('#avFile').click()};
+  $('#avDel').onclick=function(){saveAvatar('')};
+  $('#avFile').onchange=function(){
+    var f=this.files&&this.files[0]; this.value='';
+    if(!f) return;
+    if(!/^image\//.test(f.type)) return toast('Зөвхөн зураг оруулна уу.');
+    squareJpeg(f,128).then(saveAvatar,function(){toast('Зургийг уншиж чадсангүй.')});
+  };
+
+  /* ---------- bottom tab bar ---------- */
+  var shopTab=false;
+  function updateTabs(){
+    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='admin'?'':(shopTab?'shop':'home'));
+    if($('#drawer').classList.contains('on')) cur='cart';
+    $$('.tab').forEach(function(t){if(t.getAttribute('data-tab')===cur)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
+    var n=cart.reduce(function(a,c){return a+c.qty},0); $('#tabBadge').textContent=n; $('#tabBadge').hidden=!n;
+    var ic=$('#tabAccIc');
+    if(user&&user.avatar){ic.innerHTML='';ic.appendChild(avatarImg(user.avatar))}
+    else if(!ic.querySelector('svg')) ic.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.500 2 7.500 6"/></svg>';
+    $('#tabAccTx').textContent=user?user.name.split(' ')[0]:'Нэвтрэх';
+  }
+  $('#tabCart').onclick=function(){openDrawer()};
+  $('#tabAcc').onclick=function(){if(user){shopTab=false;location.hash='profile';updateTabs()}else openAuth('Нэвтэрнэ үү')};
+  $('#tabHome').addEventListener('click',function(){shopTab=false;if(location.hash==='#home'||!location.hash){window.scrollTo({top:0,behavior:'smooth'})}});
+  $('#tabShop').addEventListener('click',function(){shopTab=true;setTimeout(updateTabs,40)});
+  $('#tabPay').addEventListener('click',function(){shopTab=false});
+  window.addEventListener('hashchange',function(){if(location.hash!=='#home'&&location.hash!=='')shopTab=false;updateTabs()});
+
   /* ---------- routing ---------- */
   function route(){
     var h=location.hash.replace('#','');
@@ -1298,6 +1393,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     if(h==='profile') renderProfile();
     if(h==='payment'){$('#payPage').innerHTML=payBox(null,'')+'<div id="proofBox"></div>';renderProof()}
     if(h==='profile'||h==='payment'||h==='admin') window.scrollTo(0,0);
+    updateTabs();
   }
 
   /* ---------- events ---------- */
