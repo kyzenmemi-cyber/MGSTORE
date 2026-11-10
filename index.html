@@ -199,6 +199,8 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card .price{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums}
 /* discount: new price green, old price crossed out with a red line */
 .sale{color:#16a34a;font-weight:700}
+.left{display:block;margin:2px 0 8px;font-size:12px;color:var(--mute)}
+.left.low{color:#dc2626;font-weight:600}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
 .card .add{align-self:flex-start;font-weight:600;border-bottom:1px solid var(--fg);padding-bottom:1px}
 .card .add:hover{border-bottom-width:2px}
@@ -692,6 +694,20 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     if(opt===undefined){var p=byId(id),cb=p?combos(p):[];if(cb.length)return cb.every(function(o){var v=stockOf(id,o);return v!==undefined&&v<=0})}
     var v=stockOf(id,opt);return v!==undefined&&v<=0;
   }
+  // units left to show customers: the chosen option, or the product total (each stock row counted once); undefined when not tracked
+  function leftOf(id,opt){
+    if(opt) return stockOf(id,opt);
+    var p=byId(id),cb=p?combos(p):[];
+    if(!cb.length) return STOCK[id];
+    var seen={},sum=0;
+    for(var i=0;i<cb.length;i++){
+      var o=cb[i],k=STOCK[id+'|'+o]!==undefined?id+'|'+o:(o.indexOf(', ')>0&&STOCK[id+'|'+o.slice(0,o.indexOf(', '))]!==undefined?id+'|'+o.slice(0,o.indexOf(', ')):id);
+      if(STOCK[k]===undefined) return undefined;
+      if(!seen[k]){seen[k]=1;sum+=STOCK[k]}
+    }
+    return sum;
+  }
+  function leftHtml(n){return n===undefined||n<=0?'':'<span class="left'+(n<=3?' low':'')+'">'+(n<=3?'Сүүлийн ':'Үлдсэн: ')+n+' ширхэг</span>'}
   function maxQty(id,opt){var v=stockOf(id,opt);return v===undefined?9:Math.max(0,Math.min(9,v))}
   // catalog: the built-in list above plus the admin's changes (a row with a built-in id overrides it, a new id adds a product, active=false hides it)
   function applyCatalog(rows){
@@ -808,7 +824,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       return '<article class="card">'+
         '<button class="ph" type="button" data-qv="'+p.id+'" aria-label="Түргэн харах: '+esc(p.name)+'">'+pic(p)+'</button>'+
         '<div class="row"><h3>'+esc(p.name)+'</h3><span class="price">'+priceHtml(p)+'</span></div>'+
-        rateLine(p.id)+
+        rateLine(p.id)+leftHtml(leftOf(p.id))+
         (soldOut(p.id)?'<button class="add" type="button" disabled style="opacity:.55;cursor:default;border-bottom-color:transparent">Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">Сагсанд нэмэх</button>')+
       '</article>';
     }).join('');
@@ -876,7 +892,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
       '<p class="mute" style="white-space:pre-line">'+esc(p.desc)+'</p>'+
       (p.colors&&p.colors.length?'<div class="mono mute" style="font-size:12px;margin:16px 0 6px">Өнгө</div><div class="sw">'+p.colors.map(function(c,i){return '<button type="button" data-col="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c.n)+'</button>'}).join('')+'</div>':'')+
       (p.conns&&p.conns.length?'<div class="mono mute" style="font-size:12px;margin:16px 0 6px">Холбогч</div><div class="sw">'+p.conns.map(function(c,i){return '<button type="button" data-cn="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c)+'</button>'}).join('')+'</div>':'')+
-      '<div class="qty" style="margin:18px 0"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
+      '<div id="qvLeft" style="margin-top:14px"></div><div class="qty" style="margin:18px 0"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
       '<button class="btn block" type="button" id="qvAdd">Сагсанд нэмэх</button><button class="btn block" type="button" id="qvNow" style="margin-top:10px">Шууд захиалах</button>'+'</div></div><section class="rev" id="revBox"></section>',true);
     renderRev(id);
     var q=1;
@@ -890,6 +906,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
     var refresh=function(){
       var o=optStr(), so=o?soldOut(id,o):soldOut(id), mx=Math.max(1,maxQty(id,o||undefined));
       q=Math.min(q,mx);$('#qvQty').textContent=q;
+      $('#qvLeft').innerHTML=leftHtml(o?stockOf(id,o):leftOf(id));
       [['#qvAdd','Сагсанд нэмэх'],['#qvNow','Шууд захиалах']].forEach(function(x){var el=$(x[0]);if(el){el.disabled=so;el.textContent=so?'Дууссан':x[1]}});
       $$('[data-col]').forEach(function(b){var i=+b.getAttribute('data-col'),all=true;for(var j=0;j<nk;j++){if(!gone(i,j))all=false}b.textContent=p.colors[i].n+(all?' (дууссан)':'')});
       $$('[data-cn]').forEach(function(b){var j=+b.getAttribute('data-cn');b.textContent=p.conns[j]+(gone(ci,j)?' (дууссан)':'')});
