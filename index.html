@@ -387,7 +387,10 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 .brand:hover,.brand:active,.brand:focus-visible{transform:translateY(-3px)}
 @media (prefers-reduced-motion:reduce){.brand{transition:none}.brand:hover,.brand:active,.brand:focus-visible{transform:none}}
 .sortgrp{display:flex;gap:8px;flex:none}
-@media (max-width:720px){.sortgrp{align-self:flex-start;flex-wrap:wrap}}
+.favbtn{display:inline-flex;align-items:center;gap:6px}
+.favbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.favbtn[aria-pressed="true"] svg{fill:currentColor}
+@media (max-width:720px){.sortgrp{align-self:stretch;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:0 2px}.sortgrp::-webkit-scrollbar{display:none}.sortgrp .chip{flex:none;white-space:nowrap}}
 /* bottom tab bar */
 .tabbar{position:fixed;z-index:40;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .tab{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:62px;padding:8px 2px;font-size:12px;font-weight:600;color:var(--mute);background:none;border:0;text-decoration:none;cursor:pointer;font-family:inherit}
@@ -782,15 +785,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var CATS_ORDER=['Powerbank','Чихэвч','Сэнс','Салаалагч','Хуруувч','PC сет','Гар дулаацуулагч','Нүдний шил','Микрофон'];
   var FILTER='Бүгд', SORT='', WISHCAT='♥ Хадгалсан', WISH=(function(){var w=store.get('mg_wish',[]);return Array.isArray(w)?w:[]})();
   function isWish(id){return WISH.indexOf(id)>=0}
-  function toggleWish(id){var i=WISH.indexOf(id);if(i>=0)WISH.splice(i,1);else WISH.push(id);store.set('mg_wish',WISH);toast(i>=0?'Хадгалснаас хасагдлаа':'Хадгалагдлаа ♥');if(FILTER===WISHCAT&&!WISH.length)FILTER='Бүгд';renderGrid()}
+  function toggleWish(id){var i=WISH.indexOf(id);if(i>=0)WISH.splice(i,1);else WISH.push(id);store.set('mg_wish',WISH);toast(i>=0?'Хадгалснаас хасагдлаа':'Хадгалагдлаа ♥');renderGrid()}
   var SVG_HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.700 3.700 4.500 7 4.500c2 0 3.400 1.100 5 3 1.600-1.900 3-3 5-3 3.300 0 5.300 3.200 4.200 6.600-1.700 4.800-9.200 9.400-9.200 9.400z"/></svg>',
       SVG_BASKET='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9h18l-1.800 10H4.800zM8 9l3-5M16 9l-3-5"/></svg>';
   function catsNow(){var seen={};PRODUCTS.forEach(function(p){seen[p.cat||'Бусад']=1});var out=CATS_ORDER.filter(function(c){return seen[c]});Object.keys(seen).forEach(function(c){if(out.indexOf(c)<0)out.push(c)});return out}
   function viewList(){var l=PRODUCTS.filter(function(p){return FILTER==='Бүгд'||(FILTER===WISHCAT?isWish(p.id):(p.cat||'Бусад')===FILTER)});if(SORT)l=l.slice().sort(function(a,b){return SORT==='asc'?a.price-b.price:b.price-a.price});return l}
   function renderFilters(){
-    var cats=['Бүгд'].concat(catsNow()); var nw=PRODUCTS.filter(function(p){return isWish(p.id)}).length; if(nw) cats.push(WISHCAT); if(cats.indexOf(FILTER)<0) FILTER='Бүгд';
-    $('#filters').innerHTML='<div class="chips" role="group" aria-label="Барааны төрөл">'+cats.map(function(c){return '<button class="chip" type="button" data-cat="'+esc(c)+'" aria-pressed="'+(c===FILTER)+'">'+esc(c)+(c===WISHCAT?' ('+nw+')':'')+'</button>'}).join('')+'</div>'+
-      '<span class="sortgrp"><button class="chip sortbtn" type="button" data-sortp="asc" aria-pressed="'+(SORT==='asc')+'">Үнэ: багаас ихэд</button><button class="chip sortbtn" type="button" data-sortp="desc" aria-pressed="'+(SORT==='desc')+'">Үнэ: ихээс багад</button></span>';
+    var cats=['Бүгд'].concat(catsNow()); var nw=PRODUCTS.filter(function(p){return isWish(p.id)}).length; if(cats.indexOf(FILTER)<0&&FILTER!==WISHCAT) FILTER='Бүгд';
+    $('#filters').innerHTML='<div class="chips" role="group" aria-label="Барааны төрөл">'+cats.map(function(c){return '<button class="chip" type="button" data-cat="'+esc(c)+'" aria-pressed="'+(c===FILTER)+'">'+esc(c)+'</button>'}).join('')+'</div>'+
+      '<span class="sortgrp"><button class="chip favbtn" type="button" data-cat="'+(FILTER===WISHCAT?'Бүгд':WISHCAT)+'" aria-pressed="'+(FILTER===WISHCAT)+'">'+SVG_HEART+'Миний дуртай'+(nw?' ('+nw+')':'')+'</button><button class="chip sortbtn" type="button" data-sortp="asc" aria-pressed="'+(SORT==='asc')+'">Үнэ: багаас ихэд</button><button class="chip sortbtn" type="button" data-sortp="desc" aria-pressed="'+(SORT==='desc')+'">Үнэ: ихээс багад</button></span>';
   }
   function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="sk sk-line" style="width:70%"></div><div class="sk sk-line" style="width:40%"></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
   function skRows(n){var h='';for(var i=0;i<n;i++)h+='<div class="sk sk-row" aria-hidden="true"></div>';return h}
@@ -934,7 +937,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     if(GRID_LOADING){$('#prodCount').textContent='';$('#grid').innerHTML=skCards(6);return}
     var LIST=viewList(); renderFilters();
     $('#prodCount').textContent = LIST.length + ' бараа';
-    if(!LIST.length){$('#grid').innerHTML='<div class="empty" style="grid-column:1/-1;text-align:left">Энэ төрөлд бараа алга.</div>';return}
+    if(!LIST.length){$('#grid').innerHTML='<div class="empty" style="grid-column:1/-1;text-align:left">'+(FILTER===WISHCAT?'Хадгалсан бараа алга байна. Барааны зураг дээрх ♡ дээр дарж хадгална уу.':'Энэ төрөлд бараа алга.')+'</div>';return}
     $('#grid').innerHTML = LIST.map(cardHtml).join('');
   }
   function cardHtml(p){
