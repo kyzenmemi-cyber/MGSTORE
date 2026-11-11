@@ -289,6 +289,23 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum{border:1px solid var(--line);padding:22px;display:grid;gap:14px;position:sticky;top:84px}
 .cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
 .cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
+/* checkout page */
+.ck-sec{border:1px solid var(--line);padding:22px;margin-bottom:20px}
+.ck-sec h2{margin:0 0 16px;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px;display:flex;align-items:center;gap:12px}
+.ck-n{display:inline-grid;place-items:center;width:30px;height:30px;background:var(--fg);color:var(--bg);font-family:var(--mono);font-size:14px;flex:none}
+.ck-sec .pay{margin-top:0}
+.ck-lines{display:grid;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.ck-line{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;font-size:14px}
+.ck-line .ph{width:52px;aspect-ratio:1;border-radius:8px}
+.ck-line small{display:block;color:var(--mute)}
+.ck-done{text-align:left;max-width:640px;margin:0 auto}
+.ck-ok{width:56px;height:56px;border-radius:50%;background:var(--fg);color:var(--bg);display:grid;place-items:center;margin-bottom:16px}
+.ck-ok svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ck-done h1{margin:0 0 8px}
+.cp-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.ck-done .pay-row{grid-template-columns:104px 1fr auto}
+.ck-done .pay-row .mono{white-space:nowrap}
+.ck-acts{display:grid;gap:10px;margin-top:22px}
 @media (max-width:760px){
   .tabs-away .pp-act{bottom:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .pp-grid,.cp-grid{grid-template-columns:1fr;gap:22px}
@@ -510,6 +527,10 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
   <section id="viewProduct" hidden>
     <div class="pp" id="productPage"></div>
+  </section>
+
+  <section id="viewCheckout" hidden>
+    <div class="wrap cp" id="checkoutPage"></div>
   </section>
 
   <section id="viewCart" hidden>
@@ -1222,41 +1243,60 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   });
 
   /* ---------- checkout ---------- */
+  var CK=null, CKDONE=null, CKON=false;
   function openCheckout(inst){
     var lines=inst&&inst.id?[inst]:cart; inst=inst&&inst.id?inst:null;
     if(!lines.length) return toast('Таны сагс хоосон байна');
     if(!user){if(inst)pendingInstant=inst;else pendingCheckout=true;return openAuth('Захиалахын тулд нэвтэрнэ үү')}
-    var dlv=delivery(lines), sum=lines.reduce(function(s,c){return s+byId(c.id).price*c.qty},0);
-    var rows=lines.map(function(c){var p=byId(c.id);return '<div><span>'+esc(p.name)+(c.opt?' ('+esc(c.opt)+')':'')+' × '+c.qty+'</span><span class="mono">'+fmt(p.price*c.qty)+'</span></div>'}).join('');
-    openModal('<button class="x link" type="button" data-close-modal>Хаах</button><h2 id="modalTitle">Захиалга өгөх</h2>'+
-      '<form id="coForm" novalidate style="margin-top:20px">'+
-        '<div class="two"><div class="field"><label for="cName">Бүтэн нэр</label><input id="cName" value="'+esc(user.name)+'" autocomplete="name"></div>'+
-        '<div class="field"><label for="cPhone">Утас</label><input id="cPhone" type="tel" autocomplete="tel"></div></div>'+
-        '<div class="field"><label for="cAddr">Хүргэлтийн хаяг</label><input id="cAddr" autocomplete="street-address"></div>'+
-        '<div class="field"><label for="cCity">Хот / аймаг</label><input id="cCity" autocomplete="address-level2"></div>'+
-        '<div class="items" style="border-top:1px solid var(--line);padding-top:14px;margin:6px 0 14px">'+rows+
-        '<div><span>Хүргэлт</span><span class="mono">'+(dlv?fmt(dlv):'Үнэгүй')+'</span></div><div style="font-weight:700;margin-top:6px"><span>Нийт</span><span class="mono">'+fmt(sum+dlv)+'</span></div></div>'+
-        '<p class="err" id="cErr"></p>'+
-        '<button class="btn block" type="submit">Захиалга илгээх</button>'+
-      '</form><p class="fine">Захиалга илгээсний дараа банкаар шилжүүлж төлнө. <a class="link" href="#payment" data-close-modal>Төлбөрийн мэдээлэл харах</a></p>');
+    CK={lines:lines.map(function(c){return {id:c.id,qty:c.qty,opt:c.opt||''}}),inst:!!inst}; CKDONE=null; CKON=false;
+    if(location.hash==='#checkout') renderCheckout(); else location.hash='checkout';
+  }
+  function renderCheckout(){
+    var box=$('#checkoutPage'); CKON=true;
+    if(CKDONE){box.innerHTML=CKDONE;return}
+    var lines=CK.lines.filter(function(c){return byId(c.id)});
+    if(!lines.length){location.hash='cart';return}
+    var dlv=delivery(lines), sum=lines.reduce(function(a,c){return a+byId(c.id).price*c.qty},0), sv=store.get('mg_addr',{})||{};
+    var rows=lines.map(function(c){var p=byId(c.id);return '<div class="ck-line"><div class="ph">'+linePic(c,p)+'</div><div>'+esc(p.name)+'<small>'+(c.opt?esc(c.opt)+' · ':'')+c.qty+' ш</small></div><span class="mono">'+fmt(p.price*c.qty)+'</span></div>'}).join('');
+    box.innerHTML='<a class="back" href="#cart">&larr; Сагс руу буцах</a><h1>Захиалга өгөх</h1>'+
+      '<form id="coForm" novalidate><div class="cp-grid"><div>'+
+        '<section class="ck-sec"><h2><span class="ck-n">1</span>Хүргэлтийн хаяг</h2>'+
+          '<div class="two"><div class="field"><label for="cName">Бүтэн нэр</label><input id="cName" value="'+esc(sv.name||user.name||'')+'" autocomplete="name"></div>'+
+          '<div class="field"><label for="cPhone">Утас</label><input id="cPhone" type="tel" inputmode="tel" value="'+esc(sv.phone||'')+'" autocomplete="tel"></div></div>'+
+          '<div class="field"><label for="cCity">Хот / аймаг</label><input id="cCity" value="'+esc(sv.city||'')+'" autocomplete="address-level2"></div>'+
+          '<div class="field" style="margin-bottom:0"><label for="cAddr">Хүргэлтийн хаяг</label><input id="cAddr" value="'+esc(sv.address||'')+'" autocomplete="street-address" placeholder="Дүүрэг, хороо, байр, тоот"></div></section>'+
+        '<section class="ck-sec"><h2><span class="ck-n">2</span>Төлбөр</h2>'+
+          '<p class="mute" style="margin:0 0 4px">Банкны шилжүүлгээр төлнө. Захиалга илгээсний дараа гарах кодоо гүйлгээний утга дээр бичнэ.</p>'+
+          '<div class="pay"><div class="mono mute">Банкны шилжүүлэг</div>'+
+          '<div class="pay-row"><span class="mute">Данс</span><span class="mono">'+BANK.acct+'</span><button class="link" type="button" data-tip="Хуулж авах" data-copy="'+BANK.acct+'">Хуулах</button></div>'+
+          '<div class="pay-row"><span class="mute">Нэр</span><span>'+esc(BANK.name)+'</span></div>'+
+          '<div class="pay-row"><span class="mute">Төлөх дүн</span><span class="mono" style="font-weight:700">'+fmt(sum+dlv)+'</span></div></div>'+
+          '<p class="fine" style="margin-bottom:0">Төлбөр орж ирснээс хойш 12-24 цагийн дотор хүргэнэ.</p></section>'+
+      '</div><aside class="cp-sum" aria-label="Захиалгын дүн"><h2>Таны захиалга</h2><div class="ck-lines">'+rows+'</div>'+
+        '<div class="cp-row"><span class="mute">Барааны дүн</span><span class="mono">'+fmt(sum)+'</span></div>'+
+        '<div class="cp-row"><span class="mute">Хүргэлт</span><span class="mono">'+(dlv?fmt(dlv):'Үнэгүй')+'</span></div>'+
+        '<div class="cp-row tot"><span>Төлөх дүн</span><span class="mono">'+fmt(sum+dlv)+'</span></div>'+
+        '<p class="err" id="cErr" role="alert"></p><button class="btn block" type="submit">Захиалга илгээх</button></aside></div></form>';
     $('#coForm').onsubmit=function(e){
       e.preventDefault();
+      if(!user) return openAuth('Захиалахын тулд нэвтэрнэ үү');
       var info={name:$('#cName').value.trim(),phone:$('#cPhone').value.trim(),address:$('#cAddr').value.trim(),city:$('#cCity').value.trim()};
       if(!info.name||!info.phone||!info.address||!info.city)
         return $('#cErr').textContent='Хүргэлт хийхийн тулд бүх талбарыг бөглөнө үү.';
       var btn=$('#coForm button[type="submit"]'); btn.disabled=true; $('#cErr').textContent='';
       var items=lines.map(function(c){var p=byId(c.id);return {id:p.id,name:p.name+(c.opt?' ('+c.opt+')':''),variant:c.opt||'',qty:c.qty,price:p.price}});
-      var amount=sum+dlv;
+      var amount=sum+dlv, inst=CK.inst;
       api.placeOrder(info,items,amount).then(function(order){
-        if(!inst){cart=[]; saveCart(); renderCart();} openOrder=order.id;
-        if(location.hash==='#profile') renderProfile(); else location.hash='profile';
-        openModal('<h2 id="modalTitle">Захиалга '+esc(order.id)+' илгээгдлээ</h2>'+
-          '<p class="mute" style="margin:12px 0 0">Захиалгаа баталгаажуулахын тулд дүнг бүтнээр нь шилжүүлнэ үү. Төлбөр орж ирснээс хойш 12-24 цагийн дотор хүргэнэ.</p>'+
-          '<div class="pay"><div class="pay-row"><span class="mute">Захиалгын код</span><span class="mono">'+esc(order.id)+'</span><button class="link" type="button" data-tip="Хуулж авах" data-copy="'+esc(order.id)+'">Хуулах</button></div>'+
-          '<div class="pay-row"><span class="mute">Дүн</span><span class="mono">'+fmt(amount)+'</span></div>'+
-          '<div class="pay-row"><span class="mute">Гүйлгээний утга</span><span>'+esc(order.id+' '+items.map(function(i){return i.name}).join(', '))+'</span></div></div>'+
-          '<button class="btn block" type="button" data-pay-open="'+esc(order.id)+'" style="margin-top:18px">Төлбөр хийж, баримт илгээх</button>'+
-          '<button class="btn ghost block" type="button" data-close-modal style="margin-top:10px">Болсон</button>');
+        store.set('mg_addr',info);
+        if(!inst){cart=[]; saveCart(); renderCart();} openOrder=order.id; CK=null;
+        var o={id:order.id,total:amount,items:items};
+        CKDONE='<div class="ck-done"><div class="ck-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
+          '<h1>Захиалга илгээгдлээ</h1><p class="mute" style="margin:0">Захиалгаа баталгаажуулахын тулд дүнг бүтнээр нь шилжүүлнэ үү. Төлбөр орж ирснээс хойш 12-24 цагийн дотор хүргэнэ.</p>'+
+          payRef(o)+
+          '<div class="pay"><div class="mono mute">Банкны шилжүүлэг</div><div class="pay-row"><span class="mute">Данс</span><span class="mono">'+BANK.acct+'</span><button class="link" type="button" data-tip="Хуулж авах" data-copy="'+BANK.acct+'">Хуулах</button></div><div class="pay-row"><span class="mute">Нэр</span><span>'+esc(BANK.name)+'</span></div></div>'+
+          '<div class="pay" style="margin-top:12px"><div class="mono mute">Хүргэлтийн хаяг</div><div>'+esc(info.name)+' · '+esc(info.phone)+'<br>'+esc(info.city)+', '+esc(info.address)+'</div></div>'+
+          '<div class="ck-acts"><button class="btn block" type="button" data-pay-open="'+esc(order.id)+'">Төлбөр хийсэн — баримт илгээх</button><a class="btn ghost block" href="#profile">Миний захиалга</a><a class="btn ghost block" href="#home" data-go="shop">Дэлгүүр лүү буцах</a></div></div>';
+        renderCheckout(); window.scrollTo(0,0);
       }).catch(function(ex){btn.disabled=false;var em=String((ex&&ex.message)||'');var mm=em.match(/out_of_stock:(.*)/);
         if(mm){$('#cErr').textContent=mm[1]+' — үлдэгдэл хүрэлцэхгүй эсвэл дууссан байна. Сагсаа шинэчиллээ, шалгаад дахин илгээнэ үү.';loadStock()}
         else $('#cErr').textContent='Захиалга илгээж чадсангүй. Холболтоо шалгаад дахин оролдоно уу.'});
@@ -1461,7 +1501,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   /* ---------- bottom tab bar ---------- */
   var shopTab=false;
   function updateTabs(){
-    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':h==='cart'?'cart':/^product\//.test(h)?'shop':(h==='admin'?'':(shopTab?'shop':'home'));
+    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='cart'||h==='checkout')?'cart':/^product\//.test(h)?'shop':(h==='admin'?'':(shopTab?'shop':'home'));
     $$('.tab').forEach(function(t){if(t.getAttribute('data-tab')===cur)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
     var n=cart.reduce(function(a,c){return a+c.qty},0); $('#tabBadge').textContent=n; $('#tabBadge').hidden=!n;
     var ic=$('#tabAccIc');
@@ -1494,22 +1534,26 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var h=location.hash.replace('#',''), parts=h.split('/'), v=parts[0];
     if(h==='profile'&&!user){location.hash='home';openAuth('Захиалгаа харахын тулд нэвтэрнэ үү');return}
     if(h==='admin'&&!isAdmin){location.hash='home';return}
+    if(v==='checkout'&&!CK&&!CKDONE){location.hash='cart';return}
+    if(v!=='checkout'){CKON=false;if(CKDONE)CKDONE=null}
     var pid=v==='product'?parseInt(parts[1],10):0, pp=pid?byId(pid):null;
     if(v==='product'&&!pp&&!GRID_LOADING){location.hash='home';return}
     appNav++;
-    var home=!(v==='profile'||v==='payment'||v==='admin'||v==='cart'||v==='product');
+    var home=!(v==='profile'||v==='payment'||v==='admin'||v==='cart'||v==='checkout'||v==='product');
     if(prevV==='home'&&!home) homeY=window.scrollY;
     $('#viewHome').hidden=!home;
     $('#viewProfile').hidden=(v!=='profile');
     $('#viewPayment').hidden=(v!=='payment');
     $('#viewAdmin').hidden=(v!=='admin');
     $('#viewCart').hidden=(v!=='cart');
+    $('#viewCheckout').hidden=(v!=='checkout');
     $('#viewProduct').hidden=(v!=='product');
     document.title=pp?pp.name+' — '+TITLE0:TITLE0;
     if(v==='admin') loadAdmin();
     if(v==='profile') renderProfile();
     if(v==='payment'){$('#payPage').innerHTML=payBox(null,'')+'<div id="proofBox"></div>';renderProof()}
     if(v==='cart') renderCart();
+    if(v==='checkout'&&!CKON) renderCheckout();
     if(v==='product'){if(pp)renderProduct(pid);else $('#productPage').innerHTML='<div class="sk" style="aspect-ratio:2/1"></div>'}
     if(!home) window.scrollTo(0,0); else if(prevV!=='home') window.scrollTo(0,homeY);
     prevV=home?'home':v;
