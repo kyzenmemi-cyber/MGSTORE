@@ -253,6 +253,15 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .sub{display:flex;justify-content:space-between;font-weight:600}
 .empty{padding:48px 0;text-align:center;color:var(--mute)}
 
+/* swipeable product gallery */
+.gal{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x pan-y;cursor:grab}
+.gal::-webkit-scrollbar{display:none}
+.gal.drag{scroll-snap-type:none;cursor:grabbing;scroll-behavior:auto}
+.gal-s{flex:0 0 100%;height:100%;scroll-snap-align:center;scroll-snap-stop:always}
+.gal-s img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none;pointer-events:none}
+.gal-dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:8px;z-index:2}
+.gal-dot{width:8px;height:8px;padding:0;border-radius:50%;border:1px solid var(--fg);background:transparent;transition:background .2s,transform .2s}
+.gal-dot[aria-current="true"]{background:var(--fg);transform:scale(1.25)}
 /* product + cart pages */
 .pp,.cp{max-width:1100px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-left,0px)) 90px}
 .back{display:inline-block;margin-bottom:18px;font-weight:600}
@@ -1139,10 +1148,17 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function quickView(id){if(location.hash==='#product/'+id)renderProduct(id);else location.hash='product/'+id}
   function renderProduct(id){
     var p = byId(id), pct = p.old>p.price?Math.round((1-p.price/p.old)*100):0;
-    var rel = PRODUCTS.filter(function(x){return x.id!==id&&(x.cat||'Бусад')===(p.cat||'Бусад')}).slice(0,4);
-    if(rel.length<4) rel=rel.concat(PRODUCTS.filter(function(x){return x.id!==id&&rel.indexOf(x)<0}).slice(0,4-rel.length));
+    var same = PRODUCTS.filter(function(x){return x.id!==id&&(x.cat||'Бусад')===(p.cat||'Бусад')});
+    var rel = same.concat(PRODUCTS.filter(function(x){return x.id!==id&&same.indexOf(x)<0}));
+    // slides: the product's own picture first, then one per colour that has a picture
+    var slides=[];
+    var addSlide=function(u,col){if(!u)return;for(var k=0;k<slides.length;k++){if(slides[k].u===u){if(slides[k].col<0&&col>=0)slides[k].col=col;return}}slides.push({u:u,col:col})};
+    addSlide(p.img,-1); (p.colors||[]).forEach(function(c,i){addSlide(c.img,i)});
+    var slideOf=function(col){for(var k=0;k<slides.length;k++){if(slides[k].col===col)return k}return -1};
+    var galHtml=slides.length?'<div class="gal" id="gal" tabindex="0" aria-label="Барааны зургууд">'+slides.map(function(x,k){return '<div class="gal-s"><img src="'+esc(x.u)+'" alt="'+esc(p.name)+(slides.length>1?' — '+(k+1)+'/'+slides.length:'')+'" draggable="false"></div>'}).join('')+'</div>'+
+      (slides.length>1?'<div class="gal-dots">'+slides.map(function(x,k){return '<button type="button" class="gal-dot" data-gi="'+k+'" aria-label="Зураг '+(k+1)+'"></button>'}).join('')+'</div>':''):pic(p);
     var lines =String(p.desc||'').split('\n').map(function(x){return x.trim()}).filter(Boolean);
-    $('#productPage').innerHTML='<a class="link back" href="#home" data-back>Бүх бараа</a><div class="pp-grid"><div class="ph pp-ph" id="qvPh">'+pic(p)+'</div><div class="pp-info">'+
+    $('#productPage').innerHTML='<a class="link back" href="#home" data-back>Бүх бараа</a><div class="pp-grid"><div class="ph pp-ph" id="qvPh">'+galHtml+'</div><div class="pp-info">'+
       (p.cat?'<div class="mono mute">'+esc(p.cat)+'</div>':'')+
       '<h1>'+esc(p.name)+'</h1>'+rateLine(p.id)+
       '<div class="pp-price">'+priceHtml(p)+(pct>0?'<span class="pp-badge">-'+pct+'%</span>':'')+'</div>'+
@@ -1154,7 +1170,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       (lines.length?'<ul class="pp-spec">'+lines.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
       '<div class="pp-notes"><div><b>Хүргэлт</b><span class="mute">'+(FREE_SHIP.indexOf(id)>=0?'Үнэгүй, ':fmt(DELIVERY)+', ')+'12-24 цагийн дотор</span></div><div><b>Төлбөр</b><span class="mute">Банкаар шилжүүлнэ</span></div></div>'+
       '</div></div><section class="rev" id="revBox"></section>'+
-      (rel.length?'<section class="pp-rel"><h2>Төстэй бараа</h2><div class="grid">'+rel.map(cardHtml).join('')+'</div></section>':'');
+      (rel.length?'<section class="pp-rel"><h2>Бусад бараа</h2><div class="grid">'+rel.map(cardHtml).join('')+'</div></section>':'');
     var bk=$('[data-back]');if(bk)bk.onclick=function(e){if(appNav>1){e.preventDefault();history.back()}};
     renderRev(id);
     var q=1;
@@ -1173,15 +1189,38 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       $$('[data-col]').forEach(function(b){var i=+b.getAttribute('data-col'),all=true;for(var j=0;j<nk;j++){if(!gone(i,j))all=false}b.textContent=p.colors[i].n+(all?' (дууссан)':'')});
       $$('[data-cn]').forEach(function(b){var j=+b.getAttribute('data-cn');b.textContent=p.conns[j]+(gone(ci,j)?' (дууссан)':'')});
     };
-    var showCol=function(){var u=(p.colors&&p.colors[ci]&&p.colors[ci].img)||p.img;$('#qvPh').innerHTML=u?'<img src="'+esc(u)+'" alt="'+esc(p.name)+'">':pic(p)};
+    var gal=$('#gal'), gcur=-1, glock=0;
+    var setDots=function(i){$$('.gal-dot').forEach(function(d,k){if(k===i)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')})};
+    var gotoSlide=function(i,smooth){if(!gal||i<0)return;glock=Date.now()+600;gcur=i;setDots(i);gal.scrollTo({left:i*gal.clientWidth,behavior:smooth?'smooth':'auto'})};
+    var showCol=function(){var k=slideOf(ci);gotoSlide(k>=0?k:0,true)};
+    var pressCol=function(){$$('[data-col]').forEach(function(x){x.setAttribute('aria-pressed',String(+x.getAttribute('data-col')===ci))})};
+    if(gal){
+      // swiping to a colour's picture selects that colour
+      var sync=function(){
+        if(!gal.isConnected||!gal.clientWidth) return; // a replaced gallery must not touch the new page's dots
+        var i=Math.round(gal.scrollLeft/(gal.clientWidth||1)); if(i===gcur) return;
+        gcur=i; setDots(i);
+        var sl=slides[i]; if(Date.now()<glock||!sl||sl.col<0||sl.col===ci) return;
+        ci=sl.col; pressCol(); refresh();
+      }, gt;
+      gal.addEventListener('scroll',function(){sync();clearTimeout(gt);gt=setTimeout(sync,120)},{passive:true});
+      $$('.gal-dot').forEach(function(d){d.onclick=function(){gotoSlide(+d.getAttribute('data-gi'),true)}});
+      gal.addEventListener('keydown',function(e){var k=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(k){e.preventDefault();gotoSlide(Math.max(0,Math.min(slides.length-1,gcur+k)),true)}});
+      // mouse drag (touch and trackpads already scroll natively)
+      var dx=0,x0=0,s0=0,down=false;
+      gal.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse'||slides.length<2)return;down=true;x0=e.clientX;s0=gal.scrollLeft;dx=0;gal.classList.add('drag');gal.setPointerCapture(e.pointerId)});
+      gal.addEventListener('pointermove',function(e){if(!down)return;dx=e.clientX-x0;gal.scrollLeft=s0-dx});
+      var endDrag=function(){if(!down)return;down=false;gal.classList.remove('drag');var w=gal.clientWidth,i=Math.round(gal.scrollLeft/w);if(Math.abs(dx)>w*.12)i=Math.max(0,Math.min(slides.length-1,dx<0?Math.ceil(s0/w+.01):Math.floor(s0/w-.01)));gal.scrollTo({left:i*w,behavior:'smooth'})};
+      gal.addEventListener('pointerup',endDrag);gal.addEventListener('pointercancel',endDrag);
+    }
     (function(){for(var i=0;i<nc;i++){for(var j=0;j<nk;j++){if(!gone(i,j)){ci=i;ki=j;return}}}})();
     $$('[data-col]').forEach(function(b,i){b.setAttribute('aria-pressed',String(i===ci))});
     $$('[data-cn]').forEach(function(b,j){b.setAttribute('aria-pressed',String(j===ki))});
-    if(p.colors&&p.colors.length) showCol();
+    if(gal){var s1=slideOf(ci);gotoSlide(s1>=0?s1:0,false)}
     refresh();
     $('#qvNow').onclick=function(){openCheckout({id:id,qty:q,opt:optStr()})};
     $('#qvAdd').onclick=function(){addToCart(id,q,optStr())};
-    $$('[data-col]').forEach(function(b){b.onclick=function(){ci=+b.getAttribute('data-col');showCol();refresh();$$('[data-col]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
+    $$('[data-col]').forEach(function(b){b.onclick=function(){ci=+b.getAttribute('data-col');showCol();refresh();pressCol()}});
     $$('[data-cn]').forEach(function(b){b.onclick=function(){ki=+b.getAttribute('data-cn');refresh();$$('[data-cn]').forEach(function(x){x.setAttribute('aria-pressed',String(x===b))})}});
   }
 
