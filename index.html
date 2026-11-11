@@ -289,6 +289,44 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum{border:1px solid var(--line);padding:22px;display:grid;gap:14px;position:sticky;top:84px}
 .cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
 .cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
+/* hero slider */
+.banner{padding-top:18px}
+.hero-box{position:relative;border-radius:20px;overflow:hidden;background:#0b0b0b;isolation:isolate}
+.hero-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.hero-track::-webkit-scrollbar{display:none}
+.hero-slide{flex:0 0 100%;scroll-snap-align:start;position:relative;display:block;color:#fff;text-decoration:none;aspect-ratio:5/4;min-height:250px;overflow:hidden;-webkit-user-drag:none}
+@media (min-width:700px){.hero-slide{aspect-ratio:21/7.5;min-height:300px}}
+.hero-slide>img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hs-in{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:22px 20px 40px;max-width:100%;box-sizing:border-box}
+@media (min-width:700px){.hs-in{padding:40px 56px 56px;gap:14px}}
+.hs-kick{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.hs-t{margin:0;font-family:var(--cond);font-weight:800;font-variation-settings:"wdth" 70;text-transform:uppercase;line-height:.98;font-size:clamp(24px,6.6vw,54px);max-width:14ch}
+.hs-p{margin:0;font-size:clamp(13px,3.4vw,17px);opacity:.82;line-height:1.4;max-width:30ch}
+.hs-cta{align-self:flex-start;margin-top:4px;padding:10px 18px;border-radius:999px;background:#fff;color:#0b0b0b;font-weight:700;font-size:14px;display:inline-flex;gap:8px;align-items:center}
+.hs-cta::after{content:"\2192"}
+.s-brand{background:radial-gradient(120% 140% at 85% 10%,#3a3a3a 0%,#141414 45%,#050505 100%)}
+.s-brand .hs-in,.s-ship .hs-in{max-width:68%}
+.s-brand::before{content:"mg";position:absolute;right:-2%;bottom:-18%;font-family:var(--cond);font-weight:800;font-size:clamp(180px,46vw,380px);line-height:.8;color:rgba(255,255,255,.07);letter-spacing:-.04em}
+.s-ship{background:linear-gradient(135deg,#16a34a 0%,#0c5a2b 100%)}
+.s-ship .big{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:var(--cond);font-weight:800;font-size:clamp(90px,26vw,220px);line-height:.8;color:rgba(255,255,255,.16);white-space:nowrap}
+.s-prod{background:linear-gradient(135deg,#f4f4f5 0%,#d9d9dc 100%);color:#0b0b0b}
+.s-prod .hs-cta{background:#0b0b0b;color:#fff}
+.s-prod .hs-in{max-width:56%}
+.s-prod .hs-t{max-width:11ch}
+.s-prod .pimg{position:absolute;right:2%;top:6%;bottom:12%;width:44%}
+.s-prod .pimg img{display:block;width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+.s-prod .hs-tag{align-self:flex-start;background:#dc2626;color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.hero-dots{position:absolute;left:0;right:0;bottom:12px;z-index:5;display:flex;justify-content:center;gap:2px}
+.hero-dots button{width:22px;height:22px;display:grid;place-items:center;-webkit-tap-highlight-color:transparent}
+.hero-dots button::before{content:"";width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.55);transition:width .25s,background .25s}
+.hero-dots button[aria-current="true"]::before{width:22px;background:#fff}
+.hero-box.on-light .hero-dots button::before{background:rgba(0,0,0,.3)}
+.hero-box.on-light .hero-dots button[aria-current="true"]::before{background:#0b0b0b}
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.92);color:#0b0b0b;display:none;place-items:center;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.hero-arrow svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.hero-arrow.prev{left:14px}.hero-arrow.next{right:14px}
+@media (hover:hover) and (min-width:700px){.hero-arrow{display:grid}}
+@media (prefers-reduced-motion:reduce){.hero-dots button::before{transition:none}}
 /* checkout page */
 .ck-sec{border:1px solid var(--line);padding:22px;margin-bottom:20px}
 .ck-sec h2{margin:0 0 16px;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px;display:flex;align-items:center;gap:12px}
@@ -465,7 +503,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
 <main>
   <section id="viewHome">
-    <div class="wrap" id="shop" style="padding-top:36px">
+    <div class="wrap banner" id="banner" aria-roledescription="carousel" aria-label="Онцлох">
+      <div class="hero-box" id="heroBox">
+        <div class="hero-track" id="heroTrack"></div>
+        <button class="hero-arrow prev" type="button" id="heroPrev" aria-label="Өмнөх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button class="hero-arrow next" type="button" id="heroNext" aria-label="Дараах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        <div class="hero-dots" id="heroDots" role="tablist" aria-label="Слайд сонгох"></div>
+      </div>
+    </div>
+    <div class="wrap" id="shop" style="padding-top:4px">
       <div class="section-head">
         <h2>Бүх бараа</h2>
         <span class="mono mute" id="prodCount"></span>
@@ -978,6 +1024,64 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
+
+  /* ---------- hero slider ---------- */
+  // Own banner pictures: put files in the repo (e.g. banners/1.jpg) and list them here as {img:'banners/1.jpg', href:'#shop', alt:'...'}
+  var BANNERS=[];
+  var heroIdx=0, heroSig='', heroTimer=null, heroHold=false;
+  function heroSlides(){
+    var out=[];
+    BANNERS.forEach(function(b){out.push('<a class="hero-slide" href="'+esc(b.href||'#shop')+'" data-go="shop" aria-label="'+esc(b.alt||'Баннер')+'"><img class="bg" src="'+esc(b.img)+'" alt="'+esc(b.alt||'')+'" draggable="false"></a>')});
+    out.push('<a class="hero-slide s-brand" href="#home" data-go="shop"><div class="hs-in"><span class="hs-kick">MGSTORE</span><h2 class="hs-t">Таны дуртай технологи нэг дор</h2><p class="hs-p">Powerbank, чихэвч, сэнс болон бусад. Хурдан хүргэлт, найдвартай үнэ.</p><span class="hs-cta">Бараа үзэх</span></div></a>');
+    out.push('<a class="hero-slide s-ship" href="#info" data-go="info"><div class="big">12-24</div><div class="hs-in"><span class="hs-kick">Хүргэлт</span><h2 class="hs-t">12-24 цагийн дотор хүргэнэ</h2><p class="hs-p">Төлбөр орсноос хойш хурдан хүргэнэ. Банкны шилжүүлгээр төлнө.</p><span class="hs-cta">Дэлгэрэнгүй</span></div></a>');
+    var pool=PRODUCTS.filter(function(p){return p.img&&!soldOut(p.id)});
+    var pick=pool.filter(function(p){return p.old>p.price}).concat(pool.filter(function(p){return !(p.old>p.price)})).slice(0,3);
+    pick.forEach(function(p){
+      var pct=p.old>p.price?Math.round((1-p.price/p.old)*100):0;
+      out.push('<a class="hero-slide s-prod" href="#product/'+p.id+'" data-light="1"><div class="hs-in">'+(pct?'<span class="hs-tag">−'+pct+'% хямдрал</span>':'<span class="hs-kick">Онцлох бараа</span>')+'<h2 class="hs-t" style="font-size:clamp(24px,6vw,46px)">'+esc(p.name)+'</h2><p class="hs-p mono" style="opacity:1;font-weight:600">'+fmt(p.price)+'</p><span class="hs-cta">Үзэх</span></div><div class="pimg"><img src="'+esc(p.img)+'" alt="'+esc(p.name)+'" draggable="false"></div></a>');
+    });
+    return out;
+  }
+  function renderHero(){
+    var tr=$('#heroTrack'); if(!tr) return;
+    var slides=heroSlides(), sig=slides.join('').length+':'+slides.length+PRODUCTS.map(function(p){return p.id}).slice(0,12).join(',');
+    if(sig===heroSig) return; heroSig=sig;
+    tr.innerHTML=slides.join('');
+    $('#heroDots').innerHTML=slides.map(function(_,i){return '<button type="button" role="tab" data-hero="'+i+'" aria-label="Слайд '+(i+1)+'" aria-current="'+(i===0)+'"></button>'}).join('');
+    heroIdx=0; tr.scrollLeft=0; heroSync();
+  }
+  function heroSync(){
+    var tr=$('#heroTrack'), n=tr.children.length; if(!n) return;
+    var i=Math.round(tr.scrollLeft/Math.max(1,tr.clientWidth)); heroIdx=Math.max(0,Math.min(n-1,i));
+    $$('#heroDots button').forEach(function(b,k){b.setAttribute('aria-current',String(k===heroIdx))});
+    var cur=tr.children[heroIdx]; $('#heroBox').classList.toggle('on-light',!!(cur&&cur.getAttribute('data-light')));
+  }
+  function heroGo(i){
+    var tr=$('#heroTrack'), n=tr.children.length; if(!n) return;
+    i=(i+n)%n; var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+    tr.scrollTo({left:i*tr.clientWidth,behavior:reduce?'auto':'smooth'});
+  }
+  function heroPlay(){
+    clearInterval(heroTimer);
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    heroTimer=setInterval(function(){
+      if(heroHold||document.hidden||$('#viewHome').hidden) return;
+      var r=$('#banner').getBoundingClientRect(); if(r.bottom<0||r.top>innerHeight) return;
+      heroGo(heroIdx+1);
+    },4800);
+  }
+  (function(){
+    var tr=$('#heroTrack'), raf=0;
+    tr.addEventListener('scroll',function(){cancelAnimationFrame(raf);raf=requestAnimationFrame(heroSync)},{passive:true});
+    $('#heroPrev').onclick=function(){heroGo(heroIdx-1)};
+    $('#heroNext').onclick=function(){heroGo(heroIdx+1)};
+    $('#heroDots').addEventListener('click',function(e){var b=e.target.closest('[data-hero]');if(b)heroGo(+b.getAttribute('data-hero'))});
+    var box=$('#heroBox');
+    ['pointerdown','touchstart','mouseenter','focusin'].forEach(function(ev){box.addEventListener(ev,function(){heroHold=true},{passive:true})});
+    ['pointerup','touchend','touchcancel','mouseleave','focusout'].forEach(function(ev){box.addEventListener(ev,function(){setTimeout(function(){heroHold=false},1200)},{passive:true})});
+    window.addEventListener('resize',function(){tr.scrollLeft=heroIdx*tr.clientWidth});
+    heroPlay();
+  })();
 
   /* ---------- cart ---------- */
   function saveCart(){store.set('mg_cart',cart)}
@@ -1682,7 +1786,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     el.classList.add('rv'); el.style.setProperty('--d',((i%2)*.09)+'s');
     if(RVIO) RVIO.observe(el); else el.classList.add('in');
   })}
-  var _rg=renderGrid; renderGrid=function(){_rg();reveal('#grid .card:not([aria-hidden])')};
+  var _rg=renderGrid; renderGrid=function(){_rg();if(!GRID_LOADING)renderHero();reveal('#grid .card:not([aria-hidden])')};
   var REVSEL='.section-head,.filters,.info .wrap>*,.site-foot .wrap>*,.how li';
   reveal(REVSEL);
   renderGrid(); renderCart(); runLoader(); loadStock(); loadReviews();
