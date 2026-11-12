@@ -17,6 +17,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MGSTORE">
 <link rel="icon" href="https://mgstore-mn.vercel.app/og-image.jpg">
+<link rel="manifest" href="/manifest.webmanifest">
 <meta name="twitter:image" content="https://mgstore-mn.vercel.app/og-image.jpg">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800;900&family=Roboto:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -298,6 +299,20 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum{border:1px solid var(--line);padding:22px;display:grid;gap:14px;position:sticky;top:84px}
 .cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
 .cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
+/* notifications prompt */
+.np-card{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 18px}
+.np-card b{display:block}.np-card .mute{font-size:13px}
+.np-card .btn{padding:10px 18px;min-height:0}
+.np-ico{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.np-bar{position:fixed;z-index:45;left:12px;right:12px;bottom:92px;max-width:460px;margin:0 auto;background:var(--fg);color:var(--bg);border-radius:16px;padding:14px 16px;display:grid;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.28);animation:npIn .35s cubic-bezier(.2,.7,.2,1) both}
+.np-bar[hidden]{display:none}
+.np-bar p{margin:0;font-size:14px;line-height:1.4}
+.np-bar .acts{display:flex;gap:10px;justify-content:flex-end}
+.np-bar button{padding:9px 16px;border-radius:999px;font-weight:700;font-size:14px}
+.np-bar .on{background:var(--bg);color:var(--fg)}
+.np-bar .later{opacity:.8}
+@media (min-width:900px){.np-bar{bottom:24px;left:auto;right:24px;margin:0}}
+@keyframes npIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 /* hero slider */
 .banner{padding-top:18px}
 .hero-box{position:relative;border-radius:20px;overflow:hidden;background:#0b0b0b;isolation:isolate}
@@ -546,6 +561,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   <section id="viewProfile" hidden>
     <div class="wrap profile">
       <h1>Миний бүртгэл</h1>
+      <div id="npProfile"></div>
       <div class="p-grid">
         <div class="p-card">
           <div class="av-row">
@@ -1098,6 +1114,55 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     heroPlay();
   })();
 
+  /* ---------- push notifications ---------- */
+  var VAPID_PUB='BMC1hcJWhnZwgUgPL83bbct_B4inQNu9U6rvqEPv1oT0JXddzwlSFWO9jAOzAH8E5j4EBx4wMTbLcnyyN77B8ss';
+  var PUSH_OK=!!(sb&&window.isSecureContext&&'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window);
+  var SVG_BELL='<svg class="np-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17h12l-1.5-2V10a4.500 4.500 0 0 0-9 0v5zM10 20a2 2 0 0 0 4 0"/></svg>';
+  function keyBytes(b){var p='='.repeat((4-b.length%4)%4),r=atob((b+p).replace(/-/g,'+').replace(/_/g,'/')),o=new Uint8Array(r.length);for(var i=0;i<r.length;i++)o[i]=r.charCodeAt(i);return o}
+  function pushSubscribe(){
+    return navigator.serviceWorker.register('/sw.js').then(function(){return navigator.serviceWorker.ready}).then(function(reg){
+      return reg.pushManager.getSubscription().then(function(sub){return sub||reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:keyBytes(VAPID_PUB)})});
+    }).then(function(sub){var j=sub.toJSON();return sb.rpc('save_push_subscription',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth})}).then(function(r){if(r.error)throw r.error});
+  }
+  function enablePush(){
+    if(!user) return openAuth('Мэдэгдэл авахын тулд нэвтэрнэ үү');
+    if(!PUSH_OK) return toast('Энэ төхөөрөмж мэдэгдэл дэмжихгүй байна. iPhone дээр сайтыг "Add to Home Screen" хийсний дараа асаана.');
+    if(Notification.permission==='denied') return toast('Мэдэгдэл хаагдсан байна. Хөтчийн тохиргооноос зөвшөөрнө үү.');
+    Notification.requestPermission().then(function(p){
+      if(p!=='granted'){toast('Мэдэгдэл асаагдсангүй');return}
+      return pushSubscribe().then(function(){toast('Мэдэгдэл идэвхжлээ ✓');renderNotifyUI()});
+    }).catch(function(){toast('Мэдэгдэл идэвхжүүлж чадсангүй. Дахин оролдоно уу.')});
+  }
+  function notifyCard(){
+    if(!PUSH_OK||!user) return '';
+    var st=Notification.permission;
+    if(st==='granted') return '<div class="np-card">'+SVG_BELL+'<span style="flex:1"><b>Мэдэгдэл асаалттай</b><span class="mute">Захиалга илгээгдэх үед танд мэдэгдэнэ.</span></span></div>';
+    if(st==='denied') return '<div class="np-card">'+SVG_BELL+'<span style="flex:1"><b>Мэдэгдэл хаагдсан байна</b><span class="mute">Хөтчийн тохиргооноос энэ сайтад мэдэгдэл зөвшөөрнө үү.</span></span></div>';
+    return '<div class="np-card">'+SVG_BELL+'<span style="flex:1"><b>Захиалгын мэдэгдэл авах уу?</b><span class="mute">Таны захиалга илгээгдэх үед шууд мэдэгдэнэ.</span></span><button class="btn" type="button" data-push-on>Идэвхжүүлэх</button></div>';
+  }
+  function renderNotifyUI(){
+    var pp=$('#npProfile'); if(pp) pp.innerHTML=notifyCard();
+    var bar=$('#npBar'); if(bar&&Notification&&Notification.permission==='granted') bar.hidden=true;
+  }
+  function maybeAskPush(){
+    if(!PUSH_OK||!user||Notification.permission!=='default') return;
+    var off=+store.get('mg_np_off',0); if(off&&Date.now()-off<7*864e5) return;
+    var bar=$('#npBar');
+    if(!bar){bar=document.createElement('div');bar.id='npBar';bar.className='np-bar';bar.setAttribute('role','dialog');bar.setAttribute('aria-label','Мэдэгдэл');document.body.appendChild(bar)}
+    bar.innerHTML='<p><b>Мэдэгдэл асаах уу?</b><br>Захиалга илгээгдэх үед шууд мэдэгдэл аваарай.</p><div class="acts"><button class="later" type="button" data-push-later>Дараа</button><button class="on" type="button" data-push-on>Асаах</button></div>';
+    bar.hidden=false;
+  }
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-push-on]')){var b=$('#npBar');if(b)b.hidden=true;enablePush()}
+    else if(e.target.closest('[data-push-later]')){store.set('mg_np_off',Date.now());var b2=$('#npBar');if(b2)b2.hidden=true}
+  });
+  function syncPush(){
+    if(!PUSH_OK||!user) return;
+    if(Notification.permission==='granted') pushSubscribe().catch(function(){});
+    else setTimeout(maybeAskPush,6000);
+    renderNotifyUI();
+  }
+
   /* ---------- cart ---------- */
   function saveCart(){store.set('mg_cart',cart)}
   function inCart(id,opt){return cart.filter(function(c){return c.id===id&&(c.opt||'')===(opt||'')}).reduce(function(n,c){return n+c.qty},0)}
@@ -1287,7 +1352,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   }
   function syncAccount(){
     $('#accountBtn').textContent = user ? user.name.split(' ')[0]+' · Миний бүртгэл' : 'Нэвтрэх'; $('#menuSignOut').hidden = !user;
-    var done=function(a){isAdmin=a;$('#adminLink').hidden=!a;route();updateTabs()};
+    var done=function(a){isAdmin=a;$('#adminLink').hidden=!a;route();updateTabs();syncPush()};
     if(user) api.isAdmin().then(done,function(){done(false)}); else done(false);
   }
 
@@ -1441,7 +1506,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         var o={id:order.id,total:amount,items:items};
         CKDONE='<div class="ck-done"><div class="ck-ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'+
           '<h1>Захиалга илгээгдлээ</h1><p class="mute" style="margin:0">Захиалгаа баталгаажуулахын тулд дүнг бүтнээр нь шилжүүлнэ үү. Төлбөр орж ирснээс хойш 12-24 цагийн дотор хүргэнэ.</p>'+
-          payRef(o)+
+          notifyCard()+payRef(o)+
           '<div class="pay"><div class="mono mute">Банкны шилжүүлэг</div><div class="pay-row"><span class="mute">Данс</span><span class="mono">'+BANK.acct+'</span><button class="link" type="button" data-tip="Хуулж авах" data-copy="'+BANK.acct+'">Хуулах</button></div><div class="pay-row"><span class="mute">Нэр</span><span>'+esc(BANK.name)+'</span></div></div>'+
           '<div class="pay" style="margin-top:12px"><div class="mono mute">Хүргэлтийн хаяг</div><div>'+esc(info.name)+' · '+esc(info.phone)+'<br>'+esc(info.city)+', '+esc(info.address)+'</div></div>'+
           '<div class="ck-acts"><button class="btn block" type="button" data-pay-open="'+esc(order.id)+'">Төлбөр хийсэн — баримт илгээх</button><a class="btn ghost block" href="#profile">Миний захиалга</a><a class="btn ghost block" href="#home" data-go="shop">Дэлгүүр лүү буцах</a></div></div>';
@@ -1472,7 +1537,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     }).join('') : '<div class="empty" style="text-align:left">Захиалга одоогоор алга. Захиалга өгсний дараа энд харагдана.</div>';
   }
   function renderProfile(){
-    renderAvatar(); $('#pName').textContent=user.name; $('#pEmail').textContent=user.email; $('#pSince').textContent=fdate(user.since||Date.now());
+    renderNotifyUI(); renderAvatar(); $('#pName').textContent=user.name; $('#pEmail').textContent=user.email; $('#pSince').textContent=fdate(user.since||Date.now());
     $('#orderCount').textContent='';
     var oc=sb?store.get('mg_oc_'+user.id,null):null;
     if(Array.isArray(oc)){lastOrders=oc;renderOrders()}else $('#orders').innerHTML=skRows(3);
@@ -1749,7 +1814,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       var pr=t.getAttribute('data-aset').split('|');
       var before=null; adminList.forEach(function(o){if(o.id===pr[0]){before=o.status;o.status=pr[1]}});
       renderAdmin(); toast(pr[0]+': '+st(pr[1])+' болгож өөрчиллөө');
-      api.adminSetStatus(pr[0],pr[1]).then(function(){},function(){
+      api.adminSetStatus(pr[0],pr[1]).then(function(){
+        if(pr[1]==='Shipped'&&sb) sb.functions.invoke('notify-order',{body:{code:pr[0]}}).then(function(r){var n=r&&r.data&&r.data.sent;toast(n?'Хэрэглэгчид мэдэгдэл илгээлээ ✓':'Хэрэглэгч мэдэгдэл асаагаагүй тул push илгээгдсэнгүй')},function(){})
+      },function(){
         adminList.forEach(function(o){if(o.id===pr[0]&&before)o.status=before});renderAdmin();toast('Төлөв өөрчилж чадсангүй. Өмнөх төлөвт буцаалаа.');
       });
     }
