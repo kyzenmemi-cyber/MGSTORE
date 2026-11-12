@@ -196,6 +196,11 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card:hover .ph img{transform:scale(1.06) rotate(-1.5deg)}
 .card .ph::after{content:"";position:absolute;left:18%;right:18%;bottom:11%;height:10px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent);pointer-events:none}
 .card .ph .qv{display:none}
+.card .ph img{-webkit-user-drag:none;user-select:none}
+.card .media.sw{touch-action:pan-y}
+@keyframes cardIn{from{opacity:.15;transform:translateX(var(--dx,24px))}to{opacity:1;transform:none}}
+.card .ph img.swin{animation:cardIn .3s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion:reduce){.card .ph img.swin{animation:none}}
 .badge{position:absolute;left:10px;top:10px;z-index:3;padding:4px 9px;border-radius:999px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.02em;background:var(--fg);color:var(--bg);pointer-events:none}
 .badge.sale-b{background:#16a34a;color:#fff}
 .badge.low-b{background:#dc2626;color:#fff}
@@ -1055,7 +1060,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       var badge=gone?'<span class="badge">Дууссан</span>':pct>0?'<span class="badge sale-b">−'+pct+'%</span>':(left!==undefined&&left>0&&left<=3?'<span class="badge low-b">Сүүлийн '+left+'</span>':'');
       var dots=(p.colors&&p.colors.length>1&&p.colors.some(function(c){return c.img}))?'<div class="dots" role="group" aria-label="Өнгө">'+p.colors.slice(0,6).map(function(c,i){return '<button type="button" data-cc="'+p.id+':'+i+'" aria-label="'+esc(c.n)+'" aria-pressed="'+(i===0)+'"></button>'}).join('')+'</div>':'';
       return '<article class="card">'+
-        '<div class="media"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
+        '<div class="media'+(dots?' sw':'')+'"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
         '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
@@ -1851,11 +1856,31 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   document.addEventListener('click',function(e){
     var w=e.target.closest('[data-wish]'); if(w){e.preventDefault();toggleWish(+w.getAttribute('data-wish'));return}
     var d=e.target.closest('[data-cc]'); if(d){
-      e.preventDefault();var pr=d.getAttribute('data-cc').split(':'),p=byId(+pr[0]),i=+pr[1],card=d.closest('.card'),img=card&&card.querySelector('.ph img');
-      if(p&&p.colors&&p.colors[i]&&img){img.src=p.colors[i].img||p.img;img.alt=p.name+' '+p.colors[i].n}
-      $$('[data-cc]',d.parentNode).forEach(function(x){x.setAttribute('aria-pressed',String(x===d))});
+      e.preventDefault();var pr=d.getAttribute('data-cc').split(':');
+      setCardColor(d.closest('.card'),+pr[0],+pr[1],0);
     }
   });
+  function setCardColor(card,pid,i,dir){
+    var p=byId(pid),img=card&&card.querySelector('.ph img'); if(card) card.setAttribute('data-sc','');
+    if(p&&p.colors&&p.colors[i]&&img){img.src=p.colors[i].img||p.img;img.alt=p.name+' '+p.colors[i].n}
+    $$('[data-cc]',card).forEach(function(x){x.setAttribute('aria-pressed',String(x.getAttribute('data-cc')===pid+':'+i))});
+    if(dir&&img){img.style.setProperty('--dx',(dir>0?28:-28)+'px');img.classList.remove('swin');void img.offsetWidth;img.classList.add('swin')}
+  }
+  // drag a card's picture sideways to change its colour (finger or mouse); a drag must not open the product
+  var cdrag=null, cswiped=0;
+  document.addEventListener('pointerdown',function(e){
+    var m=e.target.closest&&e.target.closest('.card .media.sw'); if(!m||(e.pointerType==='mouse'&&e.button)) return;
+    cdrag={m:m,x:e.clientX,y:e.clientY,id:e.pointerId};
+  });
+  document.addEventListener('pointerup',function(e){
+    if(!cdrag||e.pointerId!==cdrag.id){return} var c=cdrag; cdrag=null;
+    var dx=e.clientX-c.x, dy=e.clientY-c.y; if(Math.abs(dx)<36||Math.abs(dx)<Math.abs(dy)*1.5) return;
+    var btns=$$('[data-cc]',c.m); if(btns.length<2) return;
+    var cur=c.m.closest('.card').hasAttribute('data-sc')?btns.findIndex(function(b){return b.getAttribute('aria-pressed')==='true'}):-1, dir=dx<0?1:-1, nx=(cur+dir+btns.length)%btns.length, pr=btns[nx].getAttribute('data-cc').split(':');
+    setCardColor(c.m.closest('.card'),+pr[0],+pr[1],dir); cswiped=Date.now();
+  });
+  document.addEventListener('pointercancel',function(){cdrag=null});
+  document.addEventListener('click',function(e){if(Date.now()-cswiped<400&&e.target.closest('.card .media')){e.preventDefault();e.stopPropagation()}},true);
   $('#checkoutBtn').onclick=openCheckout;
   $('#signOut').onclick=signOut;
   $('#accountBtn').onclick=function(){if(user)location.hash='profile';else openAuth()};
