@@ -371,7 +371,8 @@ body.tip-off [data-tip]::after{opacity:0!important}
 @media (max-width:760px){
   .tabs-away .pp-act{bottom:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .pp-grid,.cp-grid{grid-template-columns:1fr;gap:22px}
-  .pp-ph,.cp-sum{position:static}
+  .pp-ph{position:relative;top:auto}
+  .cp-sum{position:static}
   .pp-act{transition:bottom .35s cubic-bezier(.4,0,.2,1);position:sticky;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:5;background:var(--bg);margin:18px -16px 0;padding:12px 16px;border-top:1px solid var(--line)}
 }
 
@@ -1219,7 +1220,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function renderProduct(id){
     var p = byId(id), pct = p.old>p.price?Math.round((1-p.price/p.old)*100):0;
     var same = PRODUCTS.filter(function(x){return x.id!==id&&(x.cat||'Бусад')===(p.cat||'Бусад')});
-    var rel = same.concat(PRODUCTS.filter(function(x){return x.id!==id&&same.indexOf(x)<0}));
+    var rel = same.slice(0,8);
     // slides: the product's own picture first, then one per colour that has a picture
     var slides=[];
     var addSlide=function(u,col){if(!u)return;for(var k=0;k<slides.length;k++){if(slides[k].u===u){if(slides[k].col<0&&col>=0)slides[k].col=col;return}}slides.push({u:u,col:col})};
@@ -1240,7 +1241,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       (lines.length?'<ul class="pp-spec">'+lines.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
       '<div class="pp-notes"><div><b>Хүргэлт</b><span class="mute">'+(FREE_SHIP.indexOf(id)>=0?'Үнэгүй, ':fmt(DELIVERY)+', ')+'12-24 цагийн дотор</span></div><div><b>Төлбөр</b><span class="mute">Банкаар шилжүүлнэ</span></div></div>'+
       '</div></div><section class="rev" id="revBox"></section>'+
-      (rel.length?'<section class="pp-rel"><h2>Бусад бараа</h2><div class="grid">'+rel.map(cardHtml).join('')+'</div></section>':'');
+      (rel.length?'<section class="pp-rel"><h2>Төстэй бараа</h2><div class="grid">'+rel.map(cardHtml).join('')+'</div></section>':'');
     var bk=$('[data-back]');if(bk)bk.onclick=function(e){if(appNav>1){e.preventDefault();history.back()}};
     renderRev(id);
     var q=1;
