@@ -212,7 +212,7 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card h3{margin:0;font-size:15px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
 .card .price{font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .card .prow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.card .rate-line{min-height:0;font-size:12px}
+.card .rate-line{min-height:0;font-size:12px;margin:2px 0 10px}
 .card .add{margin-top:10px;width:100%;height:44px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--fg);transition:transform .15s,opacity .2s}
 .card .add svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .card .add:active{transform:scale(.97)}
@@ -1029,7 +1029,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
         '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
-        '<div class="prow"><span class="price">'+priceHtml(p)+'</span>'+(rl.length?'<span class="rate-line">'+starRow(avgOf(rl))+'<span>'+(Math.round(avgOf(rl)*10)/10)+' ('+rl.length+')</span></span>':'')+'</div>'+
+        '<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+
+        '<div class="rate-line">'+starRow(rl.length?avgOf(rl):0)+'<span>'+(rl.length?(Math.round(avgOf(rl)*10)/10)+' ('+rl.length+')':'Үнэлгээгүй')+'</span></div>'+
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
