@@ -490,8 +490,7 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 .tabbar{transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s ease,visibility 0s}
 .tabs-away .tabbar:not(:focus-within){transform:translateY(100%);opacity:0;visibility:hidden;pointer-events:none;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s ease,visibility 0s .35s}
 @media (prefers-reduced-motion:reduce){.tabbar,.tabs-away .tabbar:not(:focus-within){transform:none;transition:opacity .2s}}
-.tab:active,.tab:focus-visible{background:var(--fg);color:var(--bg);outline:0}
-.tab:active .tab-badge,.tab:focus-visible .tab-badge{background:var(--bg);color:var(--fg)}
+.tab:focus-visible{outline:2px solid var(--fg);outline-offset:-4px}
 body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .toasts{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 /* profile photo */
