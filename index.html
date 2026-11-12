@@ -232,7 +232,12 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .info div+div{padding-left:24px;border-left:1px solid var(--line)}
 .info b{display:block;margin-bottom:6px}
 .site-foot{padding-block:40px 56px}
-.site-foot .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.site-foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.site-foot .soc{display:flex;gap:12px}
+.site-foot .soc a{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;color:var(--fg);-webkit-tap-highlight-color:transparent;transition:background .15s,color .15s,border-color .15s}
+.site-foot .soc a:hover,.site-foot .soc a:active{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.site-foot .soc svg{width:22px;height:22px}
+.site-foot .copy{flex-basis:100%;margin:8px 0 0;padding-top:20px;border-top:1px solid var(--line);text-align:center;color:var(--mute);font-size:12px;letter-spacing:.06em}
 
 /* panels */
 .scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
@@ -642,8 +647,12 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
 <footer class="site-foot">
   <div class="wrap">
-    <span class="mono">MGSTORE &nbsp; <a href="#payment">Төлбөр</a></span>
-    <span class="mono"><a href="https://www.facebook.com/share/1JHT6my4yf/?mibextid=wwXIfr">Facebook</a> &nbsp; <a href="https://www.instagram.com/mgstore.mn">Instagram</a></span>
+    <span class="mono"><a href="#payment">Төлбөр</a></span>
+    <span class="soc">
+      <a href="https://www.facebook.com/share/1JHT6my4yf/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook" data-tip="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.600V4.400c-.3 0-1.200-.1-2.300-.1-2.300 0-3.800 1.400-3.800 3.900v2.300H7.900v3h2.600V21z"/></svg></a>
+      <a href="https://www.instagram.com/mgstore.mn" target="_blank" rel="noopener" aria-label="Instagram" data-tip="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.500" y="3.500" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.900"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.900"/><circle cx="17.200" cy="6.800" r="1.200" fill="currentColor"/></svg></a>
+    </span>
+    <p class="copy mono">&copy; 2026 MGSTORE</p>
   </div>
 </footer>
 
