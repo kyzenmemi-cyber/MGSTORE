@@ -464,7 +464,12 @@ a,button,[role="button"],[tabindex]{outline:0;border-radius:0}
 .tab img{width:28px;height:28px;border-radius:50%;object-fit:cover;display:block;outline:2px solid transparent}
 .tab[aria-current="page"]{color:var(--fg)}
 .tab[aria-current="page"] img{outline-color:var(--fg)}
-.tab[aria-current="page"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:3px;background:var(--fg)}
+.tab-ind{position:absolute;top:6px;left:0;width:20%;height:32px;pointer-events:none;transform:translateX(calc(var(--i,0)*100%));opacity:1}
+.tab-ind::before{content:"";position:absolute;left:50%;top:0;width:60px;height:32px;margin-left:-30px;border-radius:16px;background:rgba(0,0,0,.09)}
+:root[data-theme="dark"] .tab-ind::before{background:rgba(255,255,255,.14)}
+.tabbar.ind-on .tab-ind{transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .25s ease}
+.tabbar.no-ind .tab-ind{opacity:0}
+@media (prefers-reduced-motion:reduce){.tabbar.ind-on .tab-ind{transition:none}}
 .tab-badge{position:absolute;top:-6px;right:-10px;min-width:18px;height:18px;padding:0 5px;background:var(--fg);color:var(--bg);font-family:var(--mono);font-size:10px;line-height:18px;text-align:center;border-radius:9px}
 .tab-badge[hidden]{display:none}
 .tabbar{transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s ease,visibility 0s}
@@ -626,7 +631,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   </div>
 </footer>
 
-<nav class="tabbar" id="tabbar" aria-label="Доод цэс">
+<nav class="tabbar" id="tabbar" aria-label="Доод цэс"><span class="tab-ind" aria-hidden="true"></span>
   <a class="tab" id="tabHome" href="#home" data-tab="home"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg></span><span>Нүүр</span></a>
   <button class="tab" id="tabCart" type="button" data-tab="cart"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 3.5h3l2.2 11h10.6l2-8H6.2"/><circle cx="9" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span class="tab-badge" id="tabBadge" hidden>0</span></span><span>Сагс</span></button>
   <a class="tab" id="tabShop" href="#shop" data-tab="shop" data-go="shop"><span class="tab-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 20 7v10l-8 4.2L4 17V7z"/><path d="M4 7l8 4.2L20 7M12 11.2v10"/></svg></span><span>Дэлгүүр</span></a>
@@ -1647,6 +1652,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function updateTabs(){
     var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='cart'||h==='checkout')?'cart':/^product\//.test(h)?'shop':(h==='admin'?'':(shopTab?'shop':'home'));
     $$('.tab').forEach(function(t){if(t.getAttribute('data-tab')===cur)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
+    var bar=$('#tabbar'), ti=$$('.tab').findIndex(function(t){return t.getAttribute('aria-current')==='page'});
+    bar.classList.toggle('no-ind',ti<0); if(ti>=0) bar.style.setProperty('--i',ti);
+    if(!bar.classList.contains('ind-on')) requestAnimationFrame(function(){requestAnimationFrame(function(){bar.classList.add('ind-on')})}); // first placement without animation
     var n=cart.reduce(function(a,c){return a+c.qty},0); $('#tabBadge').textContent=n; $('#tabBadge').hidden=!n;
     var ic=$('#tabAccIc');
     if(user&&user.avatar){ic.innerHTML='';ic.appendChild(avatarImg(user.avatar))}
