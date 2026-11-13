@@ -571,6 +571,12 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .lb-name{font-size:13px}.lb-score,.lb-row.r1 .lb-score{font-size:13px}.lb-score small{font-size:9px}
 .lb-prize{padding:3px 6px;font-size:11px;gap:8px;margin-top:0;border-radius:8px}.lb-prize .pz{width:24px;height:24px;border-radius:6px}.lb-prize .pz svg{width:14px;height:14px}.lb-prize b{display:inline;margin-right:6px;font-size:9px}
 @media (min-width:760px){.lb-row,.lb-row.r1,.lb-row.r2,.lb-row.r3{grid-template-columns:24px 28px minmax(0,1fr) 90px 260px;gap:0 10px}.lb-prize{grid-column:auto;white-space:nowrap}}
+@media (max-width:759px){
+.lb-row,.lb-row.r1,.lb-row.r2,.lb-row.r3{padding:3px 8px;gap:0 8px}
+.lb-prize{grid-column:3/-1;background:none;padding:0;margin:0;font-size:10px;line-height:1.2;color:rgba(255,255,255,.6)}
+.lb-prize .pz{display:none}.lb-prize b{font-size:9px}
+.lb-head{padding-bottom:14px}.lb-head h2{font-size:clamp(26px,7vw,36px)}.lb-head p{display:none}
+}
 /* leaderboard slide (first hero slide) */
 .s-lb{background:radial-gradient(120% 140% at 0% 0%,#6b4a00 0,#1e1500 50%,#070707 100%)}
 .s-lb::before{content:"";position:absolute;inset:-60% -10%;-webkit-mask:linear-gradient(90deg,#000,transparent 75%);mask:linear-gradient(90deg,#000,transparent 75%);background:repeating-conic-gradient(from 0deg at 25% 50%,rgba(255,196,60,.2) 0 6deg,transparent 6deg 18deg)}
