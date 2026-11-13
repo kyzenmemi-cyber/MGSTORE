@@ -556,29 +556,24 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   .lb-prize{grid-column:auto;margin:0}
   .lb-score{text-align:right}
 }
-/* leaderboard board in the announcement bar: poster + top 3 */
-.announce-lb{display:grid;gap:12px;margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.07);color:inherit;text-decoration:none;text-align:left}
-.al-poster{position:relative;overflow:hidden;border-radius:12px;display:flex;align-items:center;gap:14px;padding:14px 16px;color:#fff;background:radial-gradient(120% 140% at 0% 0%,#5a3d00 0,#1b1200 55%,#0b0b0b 100%);isolation:isolate}
-.al-poster::before{content:"";position:absolute;z-index:-1;inset:-40% auto -40% -10%;width:70%;background:repeating-conic-gradient(from 0deg at 18% 50%,rgba(255,196,60,.22) 0 6deg,transparent 6deg 18deg);opacity:.8}
-.al-poster svg{width:64px;height:64px;flex:none;fill:none;stroke:#ffc43c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(255,196,60,.55))}
-.al-poster .pt{font-family:var(--cond);font-weight:900;font-variation-settings:"wdth" 62;font-size:clamp(26px,7vw,38px);line-height:.92;text-transform:uppercase;letter-spacing:.01em}
-.al-poster .pt em{font-style:normal;color:#ffc43c}
-.al-poster .ps{margin-top:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
-.al-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end}
-.al-chip{display:grid;justify-items:center;gap:4px;padding:10px 6px;border-radius:12px;background:rgba(255,255,255,.08);text-align:center;min-width:0}
-.al-chip:nth-child(1){order:2;padding-block:16px;background:linear-gradient(180deg,rgba(255,196,60,.3),rgba(255,255,255,.08))}
-.al-chip:nth-child(2){order:1}.al-chip:nth-child(3){order:3}
-.al-chip i{font-style:normal;font-weight:800;font-size:15px}
-.al-chip:nth-child(1) i{color:#ffc43c}.al-chip:nth-child(2) i{color:#d3d9e6}.al-chip:nth-child(3) i{color:#e08e4f}
-.al-chip .al-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;overflow:hidden;font-size:18px;font-weight:700}
-.al-chip:nth-child(1) .al-av{width:60px;height:60px;box-shadow:0 0 0 2px #ffc43c}
-.al-chip .al-av img{width:100%;height:100%;object-fit:cover;display:block}
-.al-chip .al-n{font-size:12px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.al-chip b{font-family:var(--mono);font-size:15px}
-.al-chip b small{font-size:10px;font-weight:400;opacity:.65;margin-left:2px}
-.al-more{font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-align:center;opacity:.8}
-.announce-lb:hover .al-more,.announce-lb:focus-visible .al-more{text-decoration:underline}
-@media (min-width:760px){.announce-lb{grid-template-columns:minmax(260px,1fr) minmax(0,1.3fr);align-items:stretch}.al-poster{padding:20px 24px}.al-poster svg{width:84px;height:84px}.al-more{grid-column:1/-1}}
+/* leaderboard slide (first hero slide) */
+.s-lb{background:radial-gradient(120% 140% at 0% 0%,#6b4a00 0,#1e1500 50%,#070707 100%)}
+.s-lb::before{content:"";position:absolute;inset:-60% -10%;-webkit-mask:linear-gradient(90deg,#000,transparent 75%);mask:linear-gradient(90deg,#000,transparent 75%);background:repeating-conic-gradient(from 0deg at 25% 50%,rgba(255,196,60,.2) 0 6deg,transparent 6deg 18deg)}
+.s-lb .hs-in{gap:8px;padding-top:14px}.s-lb .hs-p{display:none}.s-lb .hs-pod .av{width:32px;height:32px;font-size:13px}.s-lb .hs-pod .pc:nth-child(1) .av{width:42px;height:42px}
+.s-lb .hs-t{max-width:none;font-size:clamp(24px,7vw,48px)}.s-lb .hs-t em{font-style:normal;color:#ffc43c}
+.s-lb .trophy{position:absolute;z-index:1;right:4%;top:14px;width:clamp(44px,12vw,96px);height:auto;fill:none;stroke:#ffc43c;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 12px rgba(255,196,60,.6))}
+.hs-pod{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end;max-width:460px}
+.hs-pod .pc{display:grid;justify-items:center;gap:2px;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.1);text-align:center;min-width:0}
+.hs-pod .pc:nth-child(1){order:2;padding-block:12px;background:linear-gradient(180deg,rgba(255,196,60,.35),rgba(255,255,255,.1))}
+.hs-pod .pc:nth-child(2){order:1}.hs-pod .pc:nth-child(3){order:3}
+.hs-pod i{font-style:normal;font-weight:800;font-size:13px}
+.hs-pod .pc:nth-child(1) i{color:#ffc43c}.hs-pod .pc:nth-child(2) i{color:#d3d9e6}.hs-pod .pc:nth-child(3) i{color:#e08e4f}
+.hs-pod .av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;overflow:hidden;font-weight:700}
+.hs-pod .pc:nth-child(1) .av{width:48px;height:48px;box-shadow:0 0 0 2px #ffc43c}
+.hs-pod .av img{width:100%;height:100%;object-fit:cover;display:block}
+.hs-pod .nm{font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-pod b{font-family:var(--mono);font-size:13px}
+@media (min-width:700px){.s-lb .hs-p{display:block}.s-lb .hs-in{padding-top:40px;display:grid;grid-template-columns:1fr minmax(320px,460px);align-items:center;gap:24px}.s-lb .hs-in>div:first-child{display:grid;gap:12px}.s-lb .hs-pod .av{width:52px;height:52px}.s-lb .hs-pod .pc:nth-child(1) .av{width:68px;height:68px}}
 </style>
 
 </head>
@@ -592,11 +587,6 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 </div>
 
 <div class="announce mono"><div class="wrap">12-24 цагийн дотор хүргэнэ. Утас 90120029, өдөр бүр 09:00–22:00. Улаанхуаран ТОК center В1 давхар</div>
-  <div class="wrap"><a class="announce-lb" id="annLb" href="#leaderboard" aria-label="Тэргүүлэгчдийн жагсаалт үзэх">
-    <div class="al-poster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.500c0 3 1.500 4.500 3.600 4.800M16 6h3.500c0 3-1.500 4.500-3.600 4.800M12 13v4M8.500 20h7M9.500 17h5v3h-5z"/></svg><div><div class="pt">Тэргүүлэгч <em>болж</em><br>шагнал ав</div><div class="ps">Хүргэгдсэн захиалга бүр = 1 оноо · Топ 3 шагналтай</div></div></div>
-    <div class="al-podium" id="annLbList"></div>
-    <span class="al-more">Бүх жагсаалт &rsaquo;</span>
-  </a></div>
 </div>
 
 <header class="site-head">
@@ -1189,6 +1179,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var heroIdx=0, heroSig='', heroTimer=null, heroHold=false;
   function heroSlides(){
     var out=[];
+    var top=(LB_ROWS||[]).slice(0,3), pod='';
+    for(var k=0;k<3;k++){var r=top[k]; pod+='<span class="pc"><i>'+(k+1)+'</i><span class="av">'+(r?lbAvatar(r):'')+'</span><span class="nm"'+(r?'':' style="opacity:.55"')+'>'+(r?esc(lbName(r.name)):'Сул')+'</span><b>'+(r?r.score+' оноо':'—')+'</b></span>'}
+    out.push('<a class="hero-slide s-lb" href="#leaderboard"><svg class="trophy" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.500c0 3 1.500 4.500 3.600 4.800M16 6h3.500c0 3-1.500 4.500-3.600 4.800M12 13v4M8.500 20h7M9.500 17h5v3h-5z"/></svg><div class="hs-in"><div><span class="hs-kick">Тэргүүлэгчид</span><h2 class="hs-t">Тэргүүлэгч <em>болж</em> шагнал ав</h2><p class="hs-p">Хүргэгдсэн захиалга бүр 1 оноо. Топ 3 шагналтай.</p></div><div class="hs-pod">'+pod+'</div></div></a>');
     BANNERS.forEach(function(b){out.push('<a class="hero-slide" href="'+esc(b.href||'#shop')+'" data-go="shop" aria-label="'+esc(b.alt||'Баннер')+'"><img class="bg" src="'+esc(b.img)+'" alt="'+esc(b.alt||'')+'" draggable="false"></a>')});
     out.push('<a class="hero-slide s-brand" href="#home" data-go="shop"><div class="hs-in"><span class="hs-kick">MGSTORE</span><h2 class="hs-t">Таны дуртай технологи нэг дор</h2><p class="hs-p">Powerbank, чихэвч, сэнс болон бусад. Хурдан хүргэлт, найдвартай үнэ.</p><span class="hs-cta">Бараа үзэх</span></div></a>');
     out.push('<a class="hero-slide s-ship" href="#info" data-go="info"><div class="big">12-24</div><div class="hs-in"><span class="hs-kick">Хүргэлт</span><h2 class="hs-t">12-24 цагийн дотор хүргэнэ</h2><p class="hs-p">Төлбөр орсноос хойш хурдан хүргэнэ. Банкны шилжүүлгээр төлнө.</p><span class="hs-cta">Дэлгэрэнгүй</span></div></a>');
@@ -1858,17 +1851,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var GIFT='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8M12 8c-2-4-6-3-5 0 .6 1.600 3 1 5 0zM12 8c2-4 6-3 5 0-.6 1.600-3 1-5 0z"/></svg>';
   function lbName(n){var w=String(n||'').trim().split(/\s+/);return w.length>1?w[0]+' '+w[w.length-1].charAt(0).toUpperCase()+'.':(w[0]||'—')}
   function lbAvatar(r){return r.avatar?'<img src="'+esc(r.avatar)+'" alt="" loading="lazy">':esc((r.name||'?').trim().charAt(0).toUpperCase())}
-  function renderMini(){
-    var el=$('#annLbList'); if(!el) return;
-    var rows=(LB_ROWS||[]).slice(0,3), h='';
-    for(var i=0;i<3;i++){var r=rows[i];
-      h+=r?'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span class="al-n">'+esc(lbName(r.name))+'</span><b>'+r.score+'<small>оноо</small></b></span>'
-          :'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av"></span><span class="al-n" style="opacity:.55">Сул</span><b>—</b></span>';
-    }
-    el.innerHTML=h;
-  }
   function renderLb(){
-    renderMini();
+    renderHero();
     var box=$('#lbList'); if(!box) return;
     var rows=LB_ROWS, html='', i;
     if(rows===null&&!LB_ERR){
