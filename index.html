@@ -1844,8 +1844,12 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function lbAvatar(r){return r.avatar?'<img src="'+esc(r.avatar)+'" alt="" loading="lazy">':esc((r.name||'?').trim().charAt(0).toUpperCase())}
   function renderMini(){
     var el=$('#annLbList'); if(!el) return;
-    var rows=(LB_ROWS||[]).slice(0,3);
-    el.innerHTML=rows.length?rows.map(function(r,i){return '<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span>'+esc(lbName(r.name))+'</span><b>'+r.score+'</b></span>'}).join(''):'<span>Эхний байраа эзэл</span>';
+    var rows=(LB_ROWS||[]).slice(0,3), h='';
+    for(var i=0;i<3;i++){var r=rows[i];
+      h+=r?'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span>'+esc(lbName(r.name))+'</span><b>'+r.score+'</b></span>'
+          :'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av"></span><span style="opacity:.55">Сул</span></span>';
+    }
+    el.innerHTML=h;
   }
   function renderLb(){
     renderMini();
