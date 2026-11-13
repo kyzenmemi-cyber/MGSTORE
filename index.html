@@ -556,6 +556,14 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   .lb-prize{grid-column:auto;margin:0}
   .lb-score{text-align:right}
 }
+/* compact leaderboard rows */
+.lb-list{gap:6px}
+.lb-row,.lb-row.r1,.lb-row.r2,.lb-row.r3{grid-template-columns:26px 34px minmax(0,1fr) auto;gap:8px 10px;padding:7px 10px;border-radius:12px}
+.lb-av,.lb-row.r1 .lb-av,.lb-row.r2 .lb-av,.lb-row.r3 .lb-av{width:34px;height:34px;font-size:13px}
+.lb-rank,.lb-row.r1 .lb-rank,.lb-row.r2 .lb-rank,.lb-row.r3 .lb-rank{font-size:14px}
+.lb-name{font-size:14px}.lb-score,.lb-row.r1 .lb-score{font-size:15px}.lb-score small{font-size:10px}
+.lb-prize{padding:6px 8px;font-size:12px;gap:10px}.lb-prize .pz{width:36px;height:36px}
+@media (min-width:760px){.lb-row,.lb-row:not(.r1):not(.r2):not(.r3){grid-template-columns:30px 38px minmax(0,1fr) 100px 240px}}
 /* leaderboard slide (first hero slide) */
 .s-lb{background:radial-gradient(120% 140% at 0% 0%,#6b4a00 0,#1e1500 50%,#070707 100%)}
 .s-lb::before{content:"";position:absolute;inset:-60% -10%;-webkit-mask:linear-gradient(90deg,#000,transparent 75%);mask:linear-gradient(90deg,#000,transparent 75%);background:repeating-conic-gradient(from 0deg at 25% 50%,rgba(255,196,60,.2) 0 6deg,transparent 6deg 18deg)}
@@ -739,7 +747,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       <div class="lb" aria-labelledby="lbTitle">
         <div class="lb-head">
           <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p id="lbSub"></p></div>
-          <span class="lb-top10">Топ 10</span>
+          <span class="lb-top10">Топ 3</span>
         </div>
         <ol class="lb-list" id="lbList" aria-live="polite"></ol>
         <p class="lb-note" id="lbNote"></p>
@@ -1948,11 +1956,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var box=$('#lbList'); if(!box) return;
     var rows=LB_PERIOD==='alltime'?LB_ROWS:LB_DATA[LB_PERIOD], html='', i;
     if(rows==null&&!LB_ERR){
-      for(i=0;i<10;i++) html+='<li class="lb-row ph"><span class="lb-rank">'+(i+1)+'</span><span class="lb-av"></span><span class="lb-name">&nbsp;</span><span class="lb-score">—</span></li>';
+      for(i=0;i<3;i++) html+='<li class="lb-row ph"><span class="lb-rank">'+(i+1)+'</span><span class="lb-av"></span><span class="lb-name">&nbsp;</span><span class="lb-score">—</span></li>';
       box.innerHTML=html; $('#lbNote').textContent=''; renderRewards(); return;
     }
     rows=rows||[];
-    for(i=0;i<10;i++){
+    for(i=0;i<3;i++){
       var r=rows[i], cls='lb-row'+(i<3?' r'+(i+1):'')+(r?'':' ph');
       var pz=i<3?prizeFor(LB_PERIOD,i+1):null;
       html+='<li class="'+cls+'"><span class="lb-rank">'+(i+1)+'</span>'+
