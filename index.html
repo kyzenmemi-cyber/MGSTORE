@@ -563,7 +563,14 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .lb-rank,.lb-row.r1 .lb-rank,.lb-row.r2 .lb-rank,.lb-row.r3 .lb-rank{font-size:14px}
 .lb-name{font-size:14px}.lb-score,.lb-row.r1 .lb-score{font-size:15px}.lb-score small{font-size:10px}
 .lb-prize{padding:6px 8px;font-size:12px;gap:10px}.lb-prize .pz{width:36px;height:36px}
-@media (min-width:760px){.lb-row,.lb-row:not(.r1):not(.r2):not(.r3){grid-template-columns:30px 38px minmax(0,1fr) 100px 240px}}
+/* extra-slim leaderboard rows */
+.lb-list{gap:4px}
+.lb-row,.lb-row.r1,.lb-row.r2,.lb-row.r3{grid-template-columns:20px 26px minmax(0,1fr) auto;gap:2px 8px;padding:4px 8px;border-radius:10px}
+.lb-av,.lb-row.r1 .lb-av,.lb-row.r2 .lb-av,.lb-row.r3 .lb-av{width:26px;height:26px;font-size:11px}
+.lb-rank,.lb-row.r1 .lb-rank,.lb-row.r2 .lb-rank,.lb-row.r3 .lb-rank{font-size:12px}
+.lb-name{font-size:13px}.lb-score,.lb-row.r1 .lb-score{font-size:13px}.lb-score small{font-size:9px}
+.lb-prize{padding:3px 6px;font-size:11px;gap:8px;margin-top:0;border-radius:8px}.lb-prize .pz{width:24px;height:24px;border-radius:6px}.lb-prize .pz svg{width:14px;height:14px}.lb-prize b{display:inline;margin-right:6px;font-size:9px}
+@media (min-width:760px){.lb-row,.lb-row.r1,.lb-row.r2,.lb-row.r3{grid-template-columns:24px 28px minmax(0,1fr) 90px 260px;gap:0 10px}.lb-prize{grid-column:auto;white-space:nowrap}}
 /* leaderboard slide (first hero slide) */
 .s-lb{background:radial-gradient(120% 140% at 0% 0%,#6b4a00 0,#1e1500 50%,#070707 100%)}
 .s-lb::before{content:"";position:absolute;inset:-60% -10%;-webkit-mask:linear-gradient(90deg,#000,transparent 75%);mask:linear-gradient(90deg,#000,transparent 75%);background:repeating-conic-gradient(from 0deg at 25% 50%,rgba(255,196,60,.2) 0 6deg,transparent 6deg 18deg)}
