@@ -556,17 +556,29 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   .lb-prize{grid-column:auto;margin:0}
   .lb-score{text-align:right}
 }
-/* leaderboard: mini version in the announcement bar */
-.announce-lb{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.2);color:inherit;text-decoration:none;font-size:12px;min-height:32px}
-.announce-lb .al-t{opacity:.7;text-transform:uppercase;letter-spacing:.08em;font-size:10px;white-space:nowrap}
-.al-list{display:flex;gap:6px 14px;flex-wrap:wrap;justify-content:center;min-width:0}
-.al-chip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:100%}
-.al-chip i{font-style:normal;font-weight:700}
+/* leaderboard board in the announcement bar: poster + top 3 */
+.announce-lb{display:grid;gap:12px;margin-top:10px;padding:12px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.07);color:inherit;text-decoration:none;text-align:left}
+.al-poster{position:relative;overflow:hidden;border-radius:12px;display:flex;align-items:center;gap:14px;padding:14px 16px;color:#fff;background:radial-gradient(120% 140% at 0% 0%,#5a3d00 0,#1b1200 55%,#0b0b0b 100%);isolation:isolate}
+.al-poster::before{content:"";position:absolute;z-index:-1;inset:-40% auto -40% -10%;width:70%;background:repeating-conic-gradient(from 0deg at 18% 50%,rgba(255,196,60,.22) 0 6deg,transparent 6deg 18deg);opacity:.8}
+.al-poster svg{width:64px;height:64px;flex:none;fill:none;stroke:#ffc43c;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px rgba(255,196,60,.55))}
+.al-poster .pt{font-family:var(--cond);font-weight:900;font-variation-settings:"wdth" 62;font-size:clamp(26px,7vw,38px);line-height:.92;text-transform:uppercase;letter-spacing:.01em}
+.al-poster .pt em{font-style:normal;color:#ffc43c}
+.al-poster .ps{margin-top:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75}
+.al-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end}
+.al-chip{display:grid;justify-items:center;gap:4px;padding:10px 6px;border-radius:12px;background:rgba(255,255,255,.08);text-align:center;min-width:0}
+.al-chip:nth-child(1){order:2;padding-block:16px;background:linear-gradient(180deg,rgba(255,196,60,.3),rgba(255,255,255,.08))}
+.al-chip:nth-child(2){order:1}.al-chip:nth-child(3){order:3}
+.al-chip i{font-style:normal;font-weight:800;font-size:15px}
 .al-chip:nth-child(1) i{color:#ffc43c}.al-chip:nth-child(2) i{color:#d3d9e6}.al-chip:nth-child(3) i{color:#e08e4f}
-.al-chip .al-av{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;overflow:hidden;font-size:10px;font-weight:700;flex:none}
+.al-chip .al-av{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;overflow:hidden;font-size:18px;font-weight:700}
+.al-chip:nth-child(1) .al-av{width:60px;height:60px;box-shadow:0 0 0 2px #ffc43c}
 .al-chip .al-av img{width:100%;height:100%;object-fit:cover;display:block}
-.al-chip b{font-weight:700}
-.announce-lb:hover .al-list,.announce-lb:focus-visible .al-list{text-decoration:underline}
+.al-chip .al-n{font-size:12px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.al-chip b{font-family:var(--mono);font-size:15px}
+.al-chip b small{font-size:10px;font-weight:400;opacity:.65;margin-left:2px}
+.al-more{font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-align:center;opacity:.8}
+.announce-lb:hover .al-more,.announce-lb:focus-visible .al-more{text-decoration:underline}
+@media (min-width:760px){.announce-lb{grid-template-columns:minmax(260px,1fr) minmax(0,1.3fr);align-items:stretch}.al-poster{padding:20px 24px}.al-poster svg{width:84px;height:84px}.al-more{grid-column:1/-1}}
 </style>
 
 </head>
@@ -580,7 +592,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 </div>
 
 <div class="announce mono"><div class="wrap">12-24 цагийн дотор хүргэнэ. Утас 90120029, өдөр бүр 09:00–22:00. Улаанхуаран ТОК center В1 давхар</div>
-  <a class="announce-lb wrap" id="annLb" href="#leaderboard" aria-label="Тэргүүлэгчдийн жагсаалт үзэх"><span class="al-t">Топ 3</span><span class="al-list" id="annLbList"></span><span aria-hidden="true">&rsaquo;</span></a>
+  <div class="wrap"><a class="announce-lb" id="annLb" href="#leaderboard" aria-label="Тэргүүлэгчдийн жагсаалт үзэх">
+    <div class="al-poster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.500c0 3 1.500 4.500 3.600 4.800M16 6h3.500c0 3-1.500 4.500-3.600 4.800M12 13v4M8.500 20h7M9.500 17h5v3h-5z"/></svg><div><div class="pt">Тэргүүлэгч <em>болж</em><br>шагнал ав</div><div class="ps">Хүргэгдсэн захиалга бүр = 1 оноо · Топ 3 шагналтай</div></div></div>
+    <div class="al-podium" id="annLbList"></div>
+    <span class="al-more">Бүх жагсаалт &rsaquo;</span>
+  </a></div>
 </div>
 
 <header class="site-head">
@@ -1846,8 +1862,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var el=$('#annLbList'); if(!el) return;
     var rows=(LB_ROWS||[]).slice(0,3), h='';
     for(var i=0;i<3;i++){var r=rows[i];
-      h+=r?'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span>'+esc(lbName(r.name))+'</span><b>'+r.score+'</b></span>'
-          :'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av"></span><span style="opacity:.55">Сул</span></span>';
+      h+=r?'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span class="al-n">'+esc(lbName(r.name))+'</span><b>'+r.score+'<small>оноо</small></b></span>'
+          :'<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av"></span><span class="al-n" style="opacity:.55">Сул</span><b>—</b></span>';
     }
     el.innerHTML=h;
   }
