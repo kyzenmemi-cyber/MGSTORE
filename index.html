@@ -556,6 +556,17 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   .lb-prize{grid-column:auto;margin:0}
   .lb-score{text-align:right}
 }
+/* leaderboard: mini version in the announcement bar */
+.announce-lb{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.2);color:inherit;text-decoration:none;font-size:12px;min-height:32px}
+.announce-lb .al-t{opacity:.7;text-transform:uppercase;letter-spacing:.08em;font-size:10px;white-space:nowrap}
+.al-list{display:flex;gap:6px 14px;flex-wrap:wrap;justify-content:center;min-width:0}
+.al-chip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:100%}
+.al-chip i{font-style:normal;font-weight:700}
+.al-chip:nth-child(1) i{color:#ffc43c}.al-chip:nth-child(2) i{color:#d3d9e6}.al-chip:nth-child(3) i{color:#e08e4f}
+.al-chip .al-av{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;overflow:hidden;font-size:10px;font-weight:700;flex:none}
+.al-chip .al-av img{width:100%;height:100%;object-fit:cover;display:block}
+.al-chip b{font-weight:700}
+.announce-lb:hover .al-list,.announce-lb:focus-visible .al-list{text-decoration:underline}
 </style>
 
 </head>
@@ -568,7 +579,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   </div>
 </div>
 
-<div class="announce mono"><div class="wrap">12-24 цагийн дотор хүргэнэ. Утас 90120029, өдөр бүр 09:00–22:00. Улаанхуаран ТОК center В1 давхар</div></div>
+<div class="announce mono"><div class="wrap">12-24 цагийн дотор хүргэнэ. Утас 90120029, өдөр бүр 09:00–22:00. Улаанхуаран ТОК center В1 давхар</div>
+  <a class="announce-lb wrap" id="annLb" href="#leaderboard" aria-label="Тэргүүлэгчдийн жагсаалт үзэх"><span class="al-t">Топ 3</span><span class="al-list" id="annLbList"></span><span aria-hidden="true">&rsaquo;</span></a>
+</div>
 
 <header class="site-head">
   <div class="wrap">
@@ -594,16 +607,6 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         <button class="hero-arrow prev" type="button" id="heroPrev" aria-label="Өмнөх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
         <button class="hero-arrow next" type="button" id="heroNext" aria-label="Дараах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="hero-dots" id="heroDots" role="tablist" aria-label="Слайд сонгох"></div>
-      </div>
-    </div>
-    <div class="wrap lb-wrap" id="leaderboard">
-      <div class="lb" aria-labelledby="lbTitle">
-        <div class="lb-head">
-          <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p>Илгээсэн захиалга бүр 1 оноо. Хамгийн өндөр оноотой эхний 3 хүн шагнал авна.</p></div>
-          <span class="lb-top10">Топ 10</span>
-        </div>
-        <ol class="lb-list" id="lbList" aria-live="polite"></ol>
-        <p class="lb-note" id="lbNote"></p>
       </div>
     </div>
     <div class="wrap" id="shop" style="padding-top:4px">
@@ -674,6 +677,20 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
   <section id="viewCheckout" hidden>
     <div class="wrap cp" id="checkoutPage"></div>
+  </section>
+
+  <section id="viewLb" hidden>
+    <div class="wrap" style="padding-top:12px"><a class="pp-back" href="#home" style="display:inline-block;padding:10px 0;font-weight:600;font-size:14px">&larr; Нүүр</a></div>
+    <div class="wrap lb-wrap">
+      <div class="lb" aria-labelledby="lbTitle">
+        <div class="lb-head">
+          <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p>Хүлээн авсан (хүргэгдсэн) захиалга бүр 1 оноо. Хамгийн өндөр оноотой эхний 3 хүн шагнал авна.</p></div>
+          <span class="lb-top10">Топ 10</span>
+        </div>
+        <ol class="lb-list" id="lbList" aria-live="polite"></ol>
+        <p class="lb-note" id="lbNote"></p>
+      </div>
+    </div>
   </section>
 
   <section id="viewCart" hidden>
@@ -837,7 +854,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var BASE = PRODUCTS.map(function(p){return Object.assign({},p)}), ALLP = BASE.slice();
   var STEPS = ['Processing','Shipped','Delivered'];
   /* ---------- leaderboard ---------- */
-  // 1 point per order that has been sent (Shipped) or received (Delivered). Needs the leaderboard() function in Supabase: see leaderboard.sql
+  // 1 point per order that arrived (status Delivered). Data comes from the get_leaderboard() function in Supabase.
   var LB_PRIZES=[{name:'',img:''},{name:'',img:''},{name:'',img:''}]; // fill in later: {name:'Шагналын нэр',img:'https://…/zurag.jpg'}
   var LB_ROWS=null, LB_ERR=false;
   var STATUS_MN = {Processing:'Боловсруулж байна',Shipped:'Илгээсэн',Delivered:'Хүргэгдсэн'};
@@ -867,7 +884,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     leaderboard:function(){
       var all=store.get('mg_orders',{}), us=store.get('mg_users',{}), out=[];
       Object.keys(all).forEach(function(em){
-        var n=(all[em]||[]).filter(function(o){return !o.sample&&(o.status==='Shipped'||o.status==='Delivered')}).length;
+        var n=(all[em]||[]).filter(function(o){return !o.sample&&o.status==='Delivered'}).length;
         if(n) out.push({id:em,name:(us[em]&&us[em].name)||em.split('@')[0],avatar:(us[em]&&us[em].avatar)||'',score:n});
       });
       out.sort(function(a,b){return b.score-a.score});
@@ -895,7 +912,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     }
   };
   var remote = {
-    leaderboard:function(){return sb.rpc('leaderboard').then(function(r){if(r.error)throw r.error;return (r.data||[]).map(function(x){return {id:x.user_id,name:x.name,avatar:x.avatar||'',score:Number(x.score)}})})},
+    leaderboard:function(){return sb.rpc('get_leaderboard').then(function(r){if(r.error)throw r.error;return (r.data||[]).map(function(x){return {id:null,name:x.display_name,avatar:x.avatar||'',score:Number(x.points)}})})},
     setAvatar:function(d){return sb.auth.updateUser({data:{avatar:d}}).then(function(r){if(r.error)throw r.error})},
     init:function(){return sb.auth.getSession().then(function(r){return r.data.session?toUser(r.data.session.user):null})},
     signUp:function(name,email,pass){
@@ -1825,7 +1842,13 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var GIFT='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8M12 8c-2-4-6-3-5 0 .6 1.600 3 1 5 0zM12 8c2-4 6-3 5 0-.6 1.600-3 1-5 0z"/></svg>';
   function lbName(n){var w=String(n||'').trim().split(/\s+/);return w.length>1?w[0]+' '+w[w.length-1].charAt(0).toUpperCase()+'.':(w[0]||'—')}
   function lbAvatar(r){return r.avatar?'<img src="'+esc(r.avatar)+'" alt="" loading="lazy">':esc((r.name||'?').trim().charAt(0).toUpperCase())}
+  function renderMini(){
+    var el=$('#annLbList'); if(!el) return;
+    var rows=(LB_ROWS||[]).slice(0,3);
+    el.innerHTML=rows.length?rows.map(function(r,i){return '<span class="al-chip"><i>'+(i+1)+'</i><span class="al-av">'+lbAvatar(r)+'</span><span>'+esc(lbName(r.name))+'</span><b>'+r.score+'</b></span>'}).join(''):'<span>Эхний байраа эзэл</span>';
+  }
   function renderLb(){
+    renderMini();
     var box=$('#lbList'); if(!box) return;
     var rows=LB_ROWS, html='', i;
     if(rows===null&&!LB_ERR){
@@ -1853,7 +1876,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   /* ---------- bottom tab bar ---------- */
   var shopTab=false;
   function updateTabs(){
-    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='cart'||h==='checkout')?'cart':/^product\//.test(h)?'shop':(h==='admin'?'':(shopTab?'shop':'home'));
+    var h=location.hash.replace('#',''), cur=h==='payment'?'payment':h==='profile'?'account':(h==='cart'||h==='checkout')?'cart':/^product\//.test(h)?'shop':(h==='admin'||h==='leaderboard'?'':(shopTab?'shop':'home'));
     $$('.tab').forEach(function(t){if(t.getAttribute('data-tab')===cur)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
     var bar=$('#tabbar'), ti=$$('.tab').findIndex(function(t){return t.getAttribute('aria-current')==='page'});
     bar.classList.toggle('no-ind',ti<0); if(ti>=0) bar.style.setProperty('--i',ti);
@@ -1894,9 +1917,10 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var pid=v==='product'?parseInt(parts[1],10):0, pp=pid?byId(pid):null;
     if(v==='product'&&!pp&&!GRID_LOADING){location.hash='home';return}
     appNav++;
-    var home=!(v==='profile'||v==='payment'||v==='admin'||v==='cart'||v==='checkout'||v==='product');
+    var home=!(v==='leaderboard'||v==='profile'||v==='payment'||v==='admin'||v==='cart'||v==='checkout'||v==='product');
     if(prevV==='home'&&!home) homeY=window.scrollY;
     $('#viewHome').hidden=!home;
+    $('#viewLb').hidden=(v!=='leaderboard');
     $('#viewProfile').hidden=(v!=='profile');
     $('#viewPayment').hidden=(v!=='payment');
     $('#viewAdmin').hidden=(v!=='admin');
