@@ -547,7 +547,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .lb-row.r1 .lb-rank{color:#ffc43c;font-size:22px}.lb-row.r2 .lb-rank{color:#d3d9e6;font-size:20px}.lb-row.r3 .lb-rank{color:#e08e4f;font-size:20px}
 .lb-row.r1 .lb-av,.lb-row.r2 .lb-av,.lb-row.r3 .lb-av{width:52px;height:52px}
 .lb-row.r1 .lb-score{font-size:24px}
-.lb-row.ph{opacity:.5}
+.lb-row.lb-empty{opacity:.5}
 .lb-note{margin:12px 6px 12px;font-size:12px;color:rgba(255,255,255,.55)}
 @media (min-width:760px){
   .lb{padding:30px 28px 16px}
@@ -1969,12 +1969,12 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var box=$('#lbList'); if(!box) return;
     var rows=LB_PERIOD==='alltime'?LB_ROWS:LB_DATA[LB_PERIOD], html='', i;
     if(rows==null&&!LB_ERR){
-      for(i=0;i<3;i++) html+='<li class="lb-row ph"><span class="lb-rank">'+(i+1)+'</span><span class="lb-av"></span><span class="lb-name">&nbsp;</span><span class="lb-score">—</span></li>';
+      for(i=0;i<3;i++) html+='<li class="lb-row lb-empty"><span class="lb-rank">'+(i+1)+'</span><span class="lb-av"></span><span class="lb-name">&nbsp;</span><span class="lb-score">—</span></li>';
       box.innerHTML=html; $('#lbNote').textContent=''; renderRewards(); return;
     }
     rows=rows||[];
     for(i=0;i<3;i++){
-      var r=rows[i], cls='lb-row'+(i<3?' r'+(i+1):'')+(r?'':' ph');
+      var r=rows[i], cls='lb-row'+(i<3?' r'+(i+1):'')+(r?'':' lb-empty');
       var pz=i<3?prizeFor(LB_PERIOD,i+1):null;
       html+='<li class="'+cls+'"><span class="lb-rank">'+(i+1)+'</span>'+
         '<span class="lb-av">'+(r?lbAvatar(r):'')+'</span>'+
