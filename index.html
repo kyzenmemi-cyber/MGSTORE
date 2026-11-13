@@ -231,6 +231,10 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .sale{color:#16a34a;font-weight:700}
 .left{display:block;margin:2px 0 8px;font-size:12px;color:var(--mute)}
 .left.low{color:#dc2626;font-weight:600}
+.left.lg{display:inline-flex;align-items:center;gap:8px;margin:0;padding:6px 14px;border-radius:999px;font-size:14px;font-weight:700;color:#166534;background:#dcfce7}
+.left.lg i{width:8px;height:8px;border-radius:50%;background:currentColor}
+.left.lg.low{color:#b91c1c;background:#fee2e2}
+.card .left{margin:0 0 4px}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
 
 .info{border-block:1px solid var(--line)}
@@ -1138,7 +1142,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     }
     return sum;
   }
-  function leftHtml(n){return n===undefined||n<=0?'':'<span class="left'+(n<=3?' low':'')+'">'+(n<=3?'Сүүлийн ':'Үлдсэн: ')+n+' ширхэг</span>'}
+  function leftHtml(n,lg){if(n===undefined)return '';var low=n<=3,t=n<=0?'Дууссан':(n<=2?'Сүүлийн '+n+' ширхэг үлдсэн':'Үлдэгдэл: '+n+' ширхэг');return '<span class="left'+(low?' low':'')+(lg?' lg':'')+'">'+(lg?'<i></i>':'')+t+'</span>'}
   function maxQty(id,opt){var v=stockOf(id,opt);return v===undefined?9:Math.max(0,Math.min(9,v))}
   // a sale with an end time: once it has passed the price goes back to the "before discount" price
   function expireSales(){var now=Date.now(),ch=false;ALLP.forEach(function(p){if(p.ends&&p.ends<=now){p.price=p.old||p.price;p.old=undefined;p.ends=0;ch=true}});return ch}
@@ -1270,7 +1274,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         '<div class="media'+(dots?' sw':'')+'"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
-        '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
+        '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+(gone?'':leftHtml(left))+
         '<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+
         '<div class="rate-line">'+starRow(rl.length?avgOf(rl):0)+'<span>'+(rl.length?(Math.round(avgOf(rl)*10)/10)+' ('+rl.length+')':'Үнэлгээгүй')+'</span></div>'+
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
@@ -1448,18 +1452,21 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     // slides: the product's own picture first, then one per colour that has a picture
     var slides=[];
     var addSlide=function(u,col){if(!u)return;for(var k=0;k<slides.length;k++){if(slides[k].u===u){if(slides[k].col<0&&col>=0)slides[k].col=col;return}}slides.push({u:u,col:col})};
-    addSlide(p.img,-1); (p.colors||[]).forEach(function(c,i){addSlide(c.img,i)});
+    // colour pictures replace the main one (it is usually the same photo as the first colour), unless some colour has no picture
+    var allPics=p.colors&&p.colors.length&&p.colors.every(function(c){return c.img});
+    if(!allPics) addSlide(p.img,-1);
+    (p.colors||[]).forEach(function(c,i){addSlide(c.img,i)});
+    if(!slides.length) addSlide(p.img,-1);
     var slideOf=function(col){for(var k=0;k<slides.length;k++){if(slides[k].col===col)return k}return -1};
     var galHtml=slides.length?'<div class="gal" id="gal" tabindex="0" aria-label="Барааны зургууд">'+slides.map(function(x,k){return '<div class="gal-s"><img src="'+esc(x.u)+'" alt="'+esc(p.name)+(slides.length>1?' — '+(k+1)+'/'+slides.length:'')+'" draggable="false"></div>'}).join('')+'</div>'+
       (slides.length>1?'<div class="gal-dots">'+slides.map(function(x,k){return '<button type="button" class="gal-dot" data-gi="'+k+'" aria-label="Зураг '+(k+1)+'"></button>'}).join('')+'</div>':''):pic(p);
     var lines =String(p.desc||'').split('\n').map(function(x){return x.trim()}).filter(Boolean);
     $('#productPage').innerHTML='<a class="link back" href="#home" data-back>Бүх бараа</a><div class="pp-grid"><div class="ph pp-ph" id="qvPh">'+galHtml+'</div><div class="pp-info">'+
       (p.cat?'<div class="mono mute">'+esc(p.cat)+'</div>':'')+
-      '<h1>'+esc(p.name)+'</h1>'+rateLine(p.id)+
+      '<h1>'+esc(p.name)+'</h1><div id="qvLeft" style="margin:8px 0 4px"></div>'+rateLine(p.id)+
       '<div class="pp-price">'+priceHtml(p)+(pct>0?'<span class="pp-badge">-'+pct+'%</span>':'')+'</div>'+endsHtml(p)+
       (p.colors&&p.colors.length?'<div class="pp-opt"><div class="mono mute">Өнгө</div><div class="sw">'+p.colors.map(function(c,i){return '<button type="button" data-col="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c.n)+'</button>'}).join('')+'</div></div>':'')+
       (p.conns&&p.conns.length?'<div class="pp-opt"><div class="mono mute">Холбогч</div><div class="sw">'+p.conns.map(function(c,i){return '<button type="button" data-cn="'+i+'" aria-pressed="'+(i===0)+'">'+esc(c)+'</button>'}).join('')+'</div></div>':'')+
-      '<div id="qvLeft" style="margin-top:16px"></div>'+
       '<div class="pp-act"><div class="qty"><button type="button" id="qvDec" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output id="qvQty">1</output><button type="button" id="qvInc" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div>'+
       '<div class="pp-btns"><button class="btn ghost" type="button" id="qvAdd">Сагсанд нэмэх</button><button class="btn" type="button" id="qvNow">Шууд захиалах</button></div></div>'+
       (lines.length?'<ul class="pp-spec">'+lines.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
@@ -1479,7 +1486,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var refresh=function(){
       var o=optStr(), so=o?soldOut(id,o):soldOut(id), mx=Math.max(1,maxQty(id,o||undefined));
       q=Math.min(q,mx);$('#qvQty').textContent=q;
-      $('#qvLeft').innerHTML=leftHtml(o?stockOf(id,o):leftOf(id));
+      $('#qvLeft').innerHTML=leftHtml(o?stockOf(id,o):leftOf(id),true);
       [['#qvAdd','Сагсанд нэмэх'],['#qvNow','Шууд захиалах']].forEach(function(x){var el=$(x[0]);if(el){el.disabled=so;el.textContent=so?'Дууссан':x[1]}});
       $$('[data-col]').forEach(function(b){var i=+b.getAttribute('data-col'),all=true;for(var j=0;j<nk;j++){if(!gone(i,j))all=false}b.textContent=p.colors[i].n+(all?' (дууссан)':'')});
       $$('[data-cn]').forEach(function(b){var j=+b.getAttribute('data-cn');b.textContent=p.conns[j]+(gone(ci,j)?' (дууссан)':'')});
