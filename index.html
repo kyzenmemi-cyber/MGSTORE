@@ -574,6 +574,43 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .hs-pod .nm{font-size:11px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hs-pod b{font-family:var(--mono);font-size:13px}
 @media (min-width:700px){.s-lb .hs-p{display:block}.s-lb .hs-in{padding-top:40px;display:grid;grid-template-columns:1fr minmax(320px,460px);align-items:center;gap:24px}.s-lb .hs-in>div:first-child{display:grid;gap:12px}.s-lb .hs-pod .av{width:52px;height:52px}.s-lb .hs-pod .pc:nth-child(1) .av{width:68px;height:68px}}
+/* points + reward center + admin leaderboard */
+.lb-tabs{margin:0 0 14px}
+.rc{margin-top:28px}
+.rc h2,.lb-rules h3{font-family:var(--cond);font-weight:800;font-variation-settings:"wdth" 70;text-transform:uppercase}
+.rc h2{margin:0 0 14px;font-size:clamp(28px,6vw,40px)}
+.rc-per{border:1px solid var(--line);padding:16px;margin-bottom:14px}
+.rc-hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.rc-hd h3{margin:0;font-size:20px;text-transform:uppercase}
+.rc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,210px));gap:12px}
+.rc-card{display:grid;gap:6px;align-content:start;padding:12px;background:var(--block)}
+.rc-img{display:grid;place-items:center;aspect-ratio:4/3;background:rgba(127,127,127,.14);overflow:hidden}
+.rc-img img{width:100%;height:100%;object-fit:cover;display:block}
+.rc-img svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.rc-pl{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.rc-card.p1 .rc-pl{color:#c8901a}.rc-card.p2 .rc-pl{color:#7d8798}.rc-card.p3 .rc-pl{color:#b8672c}
+.lb-rules{margin-top:22px;padding:18px;border:1px solid var(--line)}
+.lb-rules h3{margin:0 0 10px;font-size:18px}
+.lb-rules ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.5}
+.pts{border:1px solid var(--line);padding:18px;margin-bottom:26px}
+.pts-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.pts-k{font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.pts-big{font-family:var(--cond);font-weight:900;font-variation-settings:"wdth" 62;font-size:clamp(48px,12vw,72px);line-height:1}
+.pts-big small{font-family:var(--mono);font-size:13px;font-weight:400;margin-left:8px;color:var(--mute)}
+.pts-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:0;margin-top:14px;border-top:1px solid var(--line)}
+.pts-stats div{padding:12px 8px 4px 0}
+.pts-stats span{display:block;font-size:11px;color:var(--mute);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.pts-stats b{font-size:18px}
+.pts h4,.adm-sub h4{margin:20px 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);font-weight:500;color:var(--mute)}
+.pts-list{list-style:none;margin:0;padding:0}
+.pts-list li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.pts-empty{margin:0;font-size:14px}
+.adm-sub{margin-top:18px}
+.adm-row,.adm-prize{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.adm-row select,.adm-row input,.adm-prize input:not([type=hidden]):not([type=file]){min-height:40px;padding:0 10px;border:1px solid var(--line);background:var(--bg);color:var(--fg);font:inherit;min-width:0;flex:1 1 140px}
+.adm-prize input[name=price]{flex:0 1 110px}
+.btn.sm{min-height:40px;padding:0 14px;font-size:13px;margin:0;width:auto}
+.rc-img.sm{width:56px;aspect-ratio:1;flex:none}
 </style>
 
 </head>
@@ -656,6 +693,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
           <button class="btn ghost block" type="button" id="signOut">Гарах</button>
         </div>
         <div>
+          <div class="pts" id="myPts" aria-live="polite"></div>
           <div class="section-head" style="padding-top:0">
             <h2>Миний захиалгууд</h2>
             <span class="mono mute" id="orderCount"></span>
@@ -674,6 +712,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       <p class="mute" style="margin:0 0 14px">Шинэ бараа нэмэх, нэр, үнэ, мэдээлэл, зургийг засах, сайтаас нуух боломжтой. Үлдэгдлийн тоог энд шууд оруулаад "Хадгалах" дарна. Захиалга ирэх бүрд тоо автоматаар хасагдана, 0 болбол сайт дээр "Дууссан" гэж харагдана. Тоо оруулаагүй бараа хязгааргүй гэж тооцогдоно.</p>
       <button class="btn" type="button" data-padd style="margin-bottom:16px">Шинэ бараа нэмэх</button>
       <div id="adminStock"></div>
+      <div id="adminLb" hidden>
+        <h2 style="font-size:20px;margin:48px 0 6px">Тэргүүлэгчид ба оноо</h2>
+        <p class="mute" style="margin:0 0 14px">Оноо захиалгаас автоматаар бодогддог (1,000₮ = 1 оноо, зөвхөн хүргэгдсэн). Энд шагнал, гараар оноо нэмэх/хасах, ялагчийг удирдана.</p>
+        <div id="adminLbBody"></div>
+      </div>
     </div>
   </section>
 
@@ -688,14 +731,35 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   <section id="viewLb" hidden>
     <div class="wrap" style="padding-top:12px"><a class="pp-back" href="#home" style="display:inline-block;padding:10px 0;font-weight:600;font-size:14px">&larr; Нүүр</a></div>
     <div class="wrap lb-wrap">
+      <div class="tabs lb-tabs" id="lbTabs" role="tablist" aria-label="Хугацаа">
+        <button type="button" role="tab" data-lbp="alltime" aria-selected="true">Бүх цаг</button>
+        <button type="button" role="tab" data-lbp="quarter" aria-selected="false">Улирал</button>
+        <button type="button" role="tab" data-lbp="year" aria-selected="false">Жил</button>
+      </div>
       <div class="lb" aria-labelledby="lbTitle">
         <div class="lb-head">
-          <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p>Админ захиалгыг илгээсэн (Илгээсэн төлөвт шилжүүлсэн) бүрт 1 оноо. Хамгийн өндөр оноотой эхний 3 хүн шагнал авна.</p></div>
+          <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p id="lbSub"></p></div>
           <span class="lb-top10">Топ 10</span>
         </div>
         <ol class="lb-list" id="lbList" aria-live="polite"></ol>
         <p class="lb-note" id="lbNote"></p>
       </div>
+      <section class="rc" id="rewardCenter" aria-labelledby="rcTitle">
+        <h2 id="rcTitle">Шагналын төв</h2>
+        <div id="rcBody"></div>
+      </section>
+      <section class="lb-rules">
+        <h3>Оноо хэрхэн тооцогдох вэ</h3>
+        <ul>
+          <li>Худалдан авалтын үнийн дүн <b>1,000₮ = 1 оноо</b>. Жишээ: 39,900₮ → 39.9 оноо, 99,000₮ → 99 оноо.</li>
+          <li>Зөвхөн хүргэгдэж, хүлээн авсан захиалга оноо авна. Хүргэлтийн төлбөр оноонд орохгүй.</li>
+          <li>Хөнгөлөлтийн дараа бодитоор төлсөн дүнг тооцно.</li>
+          <li>Нэг хэрэглэгч олон захиалга хийсэн ч бүх оноо нэг акаунтад хуримтлагдана.</li>
+          <li>Захиалга цуцлагдвал оноог буцааж хасна.</li>
+          <li>Оноог мөнгө болгон татаж авах боломжгүй.</li>
+          <li>Жагсаалтад нэрийг хэсэгчлэн (жишээ нь "Бат Д.") харуулна. Утас, хаяг харагдахгүй.</li>
+        </ul>
+      </section>
     </div>
   </section>
 
@@ -860,9 +924,10 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var BASE = PRODUCTS.map(function(p){return Object.assign({},p)}), ALLP = BASE.slice();
   var STEPS = ['Processing','Shipped','Delivered'];
   /* ---------- leaderboard ---------- */
-  // 1 point per order the admin has shipped (status Shipped or Delivered). Data comes from the get_leaderboard() function in Supabase.
+  // Points = purchase amount / 1,000 (delivery fee excluded) for orders the customer has received (status Delivered). Calculated in Supabase: get_leaderboard(), get_my_stats().
   var LB_PRIZES=[{name:'',img:''},{name:'',img:''},{name:'',img:''}]; // fill in later: {name:'Шагналын нэр',img:'https://…/zurag.jpg'}
-  var LB_ROWS=null, LB_ERR=false;
+  var LB_ROWS=null, LB_ERR=false, LB_PERIOD='alltime', LB_DATA={}, LB_PRIZE_ROWS=[];
+  function fmtPts(n){return (Math.round(Number(n)*10)/10).toFixed(1).replace(/\.0$/,'')}
   var STATUS_MN = {Processing:'Боловсруулж байна',Shipped:'Илгээсэн',Delivered:'Хүргэгдсэн'};
   var st = function(s){return STATUS_MN[s]||s};
 
@@ -886,15 +951,24 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var SUPABASE_URL = 'https://bblevpisgcakfwczpfwh.supabase.co', SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJibGV2cGlzZ2Nha2Z3Y3pwZndoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2MDgyOTAsImV4cCI6MjEwODE4NDI5MH0.7-hF7eSwIvnPTTierG_XnV2ICU4LlYHF5Ix40PwevN0';
   var sb = (SUPABASE_URL && window.supabase) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
   var toUser = function(u){return {id:u.id,email:u.email,name:(u.user_metadata&&u.user_metadata.full_name)||u.email,since:Date.parse(u.created_at),avatar:(u.user_metadata&&u.user_metadata.avatar)||''}};
+  function lbStart(period){var d=new Date();if(period==='year')return new Date(d.getFullYear(),0,1).getTime();if(period==='quarter')return new Date(d.getFullYear(),Math.floor(d.getMonth()/3)*3,1).getTime();return 0}
+  function ordPts(o){var base=(o.items&&o.items.length)?o.items.reduce(function(a,i){return a+(i.price||0)*(i.qty||1)},0):(o.total||0);return Math.round(base/100)/10}
   var local = {
-    leaderboard:function(){
-      var all=store.get('mg_orders',{}), us=store.get('mg_users',{}), out=[];
+    leaderboard:function(period){
+      var all=store.get('mg_orders',{}), us=store.get('mg_users',{}), out=[], t0=lbStart(period);
       Object.keys(all).forEach(function(em){
-        var n=(all[em]||[]).filter(function(o){return !o.sample&&(o.status==='Shipped'||o.status==='Delivered')}).length;
-        if(n) out.push({id:em,name:(us[em]&&us[em].name)||em.split('@')[0],avatar:(us[em]&&us[em].avatar)||'',score:n});
+        var n=(all[em]||[]).filter(function(o){return !o.sample&&o.status==='Delivered'&&(o.date||0)>=t0}).reduce(function(a,o){return a+ordPts(o)},0);
+        if(n>0) out.push({id:em,name:(us[em]&&us[em].name)||em.split('@')[0],avatar:(us[em]&&us[em].avatar)||'',score:Math.round(n*10)/10});
       });
       out.sort(function(a,b){return b.score-a.score});
       return Promise.resolve(out.slice(0,10));
+    },
+    prizes:function(){return Promise.resolve(store.get('mg_prizes',[]))},
+    myStats:function(){
+      var list=(store.get('mg_orders',{})[user.email]||[]).filter(function(o){return !o.sample&&o.status==='Delivered'});
+      var pts=list.reduce(function(a,o){return a+ordPts(o)},0);
+      return Promise.resolve({points:Math.round(pts*10)/10,rank:null,quarter_rank:null,year_rank:null,spent:Math.round(pts*1000),orders:list.length,awards:[],
+        history:list.map(function(o){return {kind:'order',ref:o.id,pts:ordPts(o),ts:o.date}})});
     },
     init:function(){return Promise.resolve(store.get('mg_user',null))},
     signUp:function(name,email,pass){
@@ -918,7 +992,16 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     }
   };
   var remote = {
-    leaderboard:function(){return sb.rpc('get_leaderboard').then(function(r){if(r.error)throw r.error;return (r.data||[]).map(function(x){return {id:null,name:x.display_name,avatar:x.avatar||'',score:Number(x.points)}})})},
+    leaderboard:function(period){return sb.rpc('get_leaderboard',{p_period:period||'alltime'}).then(function(r){if(r.error)throw r.error;return (r.data||[]).map(function(x){return {id:null,name:x.display_name,avatar:x.avatar||'',score:Number(x.points)}})})},
+    prizes:function(){return sb.from('lb_prizes').select('period,place,name,image_url,price').then(function(r){if(r.error)throw r.error;return r.data||[]})},
+    myStats:function(){return sb.rpc('get_my_stats').then(function(r){if(r.error)throw r.error;return r.data||{}})},
+    adminUsers:function(){return sb.rpc('admin_list_users').then(function(r){if(r.error)throw r.error;return r.data||[]})},
+    savePrize:function(row){return sb.from('lb_prizes').upsert(row,{onConflict:'period,place'}).then(function(r){if(r.error)throw r.error})},
+    adjustPoints:function(uid,delta,note){return sb.from('lb_adjustments').insert({user_id:uid,delta:delta,note:note||null}).then(function(r){if(r.error)throw r.error})},
+    awards:function(){return sb.from('lb_awards').select('id,user_id,period,period_label,place,prize,given,created_at').order('created_at',{ascending:false}).then(function(r){if(r.error)throw r.error;return r.data||[]})},
+    addAward:function(row){return sb.from('lb_awards').insert(row).then(function(r){if(r.error)throw r.error})},
+    setAwardGiven:function(id,given){return sb.from('lb_awards').update({given:given}).eq('id',id).then(function(r){if(r.error)throw r.error})},
+    delAward:function(id){return sb.from('lb_awards').delete().eq('id',id).then(function(r){if(r.error)throw r.error})},
     setAvatar:function(d){return sb.auth.updateUser({data:{avatar:d}}).then(function(r){if(r.error)throw r.error})},
     init:function(){return sb.auth.getSession().then(function(r){return r.data.session?toUser(r.data.session.user):null})},
     signUp:function(name,email,pass){
@@ -1180,7 +1263,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function heroSlides(){
     var out=[];
     var top=(LB_ROWS||[]).slice(0,3), pod='';
-    for(var k=0;k<3;k++){var r=top[k]; pod+='<span class="pc"><i>'+(k+1)+'</i><span class="av">'+(r?lbAvatar(r):'')+'</span><span class="nm"'+(r?'':' style="opacity:.55"')+'>'+(r?esc(lbName(r.name)):'Сул')+'</span><b>'+(r?r.score+' оноо':'—')+'</b></span>'}
+    for(var k=0;k<3;k++){var r=top[k]; pod+='<span class="pc"><i>'+(k+1)+'</i><span class="av">'+(r?lbAvatar(r):'')+'</span><span class="nm"'+(r?'':' style="opacity:.55"')+'>'+(r?esc(lbName(r.name)):'Сул')+'</span><b>'+(r?fmtPts(r.score)+' оноо':'—')+'</b></span>'}
     out.push('<a class="hero-slide s-lb" href="#leaderboard"><svg class="trophy" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.500c0 3 1.500 4.500 3.600 4.800M16 6h3.500c0 3-1.500 4.500-3.600 4.800M12 13v4M8.500 20h7M9.500 17h5v3h-5z"/></svg><div class="hs-in"><div><span class="hs-kick">Тэргүүлэгчид</span><h2 class="hs-t">Тэргүүлэгч <em>болж</em> шагнал ав</h2><p class="hs-p">Илгээсэн захиалга бүр 1 оноо. Топ 3 шагналтай.</p></div><div class="hs-pod">'+pod+'</div></div></a>');
     BANNERS.forEach(function(b){out.push('<a class="hero-slide" href="'+esc(b.href||'#shop')+'" data-go="shop" aria-label="'+esc(b.alt||'Баннер')+'"><img class="bg" src="'+esc(b.img)+'" alt="'+esc(b.alt||'')+'" draggable="false"></a>')});
     out.push('<a class="hero-slide s-brand" href="#home" data-go="shop"><div class="hs-in"><span class="hs-kick">MGSTORE</span><h2 class="hs-t">Таны дуртай технологи нэг дор</h2><p class="hs-p">Powerbank, чихэвч, сэнс болон бусад. Хурдан хүргэлт, найдвартай үнэ.</p><span class="hs-cta">Бараа үзэх</span></div></a>');
@@ -1773,6 +1856,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     };
   }
   function loadAdmin(){
+    renderAdminLb();
     loadStock().then(function(){if(isAdmin) renderAdminStock()});
     $('#adminOrders').innerHTML=skRows(4);
     api.adminOrders().then(function(l){adminList=l;renderAdmin()},function(){
@@ -1851,31 +1935,129 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var GIFT='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v8h14v-8M12 8c-2-4-6-3-5 0 .6 1.600 3 1 5 0zM12 8c2-4 6-3 5 0-.6 1.600-3 1-5 0z"/></svg>';
   function lbName(n){var w=String(n||'').trim().split(/\s+/);return w.length>1?w[0]+' '+w[w.length-1].charAt(0).toUpperCase()+'.':(w[0]||'—')}
   function lbAvatar(r){return r.avatar?'<img src="'+esc(r.avatar)+'" alt="" loading="lazy">':esc((r.name||'?').trim().charAt(0).toUpperCase())}
+  var LB_SUB={alltime:'Бүх цагийн оноо. Хамгийн өндөр оноотой хүн нэр хүндийн шагнал авна.',quarter:'Энэ улирлын оноо. 3 сар тутам эхний 3 хүн шагнал авна.',year:'Энэ жилийн оноо. Жил бүр эхний 3 хүн том шагнал авна.'};
+  var LB_NAME={alltime:'Бүх цаг',quarter:'Улирал',year:'Жил'};
+  function prizeFor(period,place){
+    var r=LB_PRIZE_ROWS.filter(function(x){return x.period===period&&x.place===place})[0];
+    return r?{name:r.name||'',img:r.image_url||'',price:r.price||0}:{name:'',img:'',price:0};
+  }
   function renderLb(){
     renderHero();
+    $$('#lbTabs [data-lbp]').forEach(function(b){b.setAttribute('aria-selected',b.getAttribute('data-lbp')===LB_PERIOD)});
+    if($('#lbSub')) $('#lbSub').textContent=LB_SUB[LB_PERIOD];
     var box=$('#lbList'); if(!box) return;
-    var rows=LB_ROWS, html='', i;
-    if(rows===null&&!LB_ERR){
+    var rows=LB_PERIOD==='alltime'?LB_ROWS:LB_DATA[LB_PERIOD], html='', i;
+    if(rows==null&&!LB_ERR){
       for(i=0;i<10;i++) html+='<li class="lb-row ph"><span class="lb-rank">'+(i+1)+'</span><span class="lb-av"></span><span class="lb-name">&nbsp;</span><span class="lb-score">—</span></li>';
-      box.innerHTML=html; $('#lbNote').textContent=''; return;
+      box.innerHTML=html; $('#lbNote').textContent=''; renderRewards(); return;
     }
     rows=rows||[];
     for(i=0;i<10;i++){
-      var r=rows[i], cls='lb-row'+(i<3?' r'+(i+1):'')+((r&&user&&r.id===user.id)?' me':'')+(r?'':' ph');
-      var pz=i<3?LB_PRIZES[i]||{}:null;
+      var r=rows[i], cls='lb-row'+(i<3?' r'+(i+1):'')+(r?'':' ph');
+      var pz=i<3?prizeFor(LB_PERIOD,i+1):null;
       html+='<li class="'+cls+'"><span class="lb-rank">'+(i+1)+'</span>'+
         '<span class="lb-av">'+(r?lbAvatar(r):'')+'</span>'+
-        '<span class="lb-name">'+(r?esc(lbName(r.name))+((user&&r.id===user.id)?'<small>Та</small>':''):'<span style="opacity:.5">Сул байр</span>')+'</span>'+
-        '<span class="lb-score">'+(r?r.score+'<small>оноо</small>':'—')+'</span>'+
+        '<span class="lb-name">'+(r?esc(lbName(r.name)):'<span style="opacity:.5">Сул байр</span>')+'</span>'+
+        '<span class="lb-score">'+(r?fmtPts(r.score)+'<small>оноо</small>':'—')+'</span>'+
         (pz?'<div class="lb-prize"><span class="pz">'+(pz.img?'<img src="'+esc(pz.img)+'" alt="" loading="lazy">':GIFT)+'</span><span><b>'+(i+1)+'-р байрны шагнал</b>'+(pz.name?esc(pz.name):'Удахгүй зарлана')+'</span></div>':'')+
         '</li>';
     }
     box.innerHTML=html;
-    $('#lbNote').textContent=LB_ERR?'Жагсаалтыг одоогоор ачаалж чадсангүй.':(rows.length?'':'Одоогоор оноотой хэрэглэгч алга. Захиалгаа илгээгдмэгц оноо нэмэгдэнэ.');
+    $('#lbNote').textContent=LB_ERR?'Жагсаалтыг одоогоор ачаалж чадсангүй.':(rows.length?'':'Одоогоор оноотой хэрэглэгч алга. Захиалгаа хүлээн авмагц оноо нэмэгдэнэ.');
+    renderRewards();
+  }
+  function periodEnd(period){
+    var d=new Date(); if(period==='year') return new Date(d.getFullYear()+1,0,1);
+    if(period==='quarter') return new Date(d.getFullYear(),Math.floor(d.getMonth()/3)*3+3,1); return null;
+  }
+  function renderRewards(){
+    var el=$('#rcBody'); if(!el) return;
+    el.innerHTML=['alltime','quarter','year'].map(function(per){
+      var end=periodEnd(per), left=end?Math.max(0,Math.ceil((end-Date.now())/86400000)):0;
+      var cards=[1,2,3].map(function(pl){
+        var z=prizeFor(per,pl);
+        if(per==='alltime'&&pl>1) return '';
+        return '<div class="rc-card p'+pl+'"><span class="rc-img">'+(z.img?'<img src="'+esc(z.img)+'" alt="" loading="lazy">':GIFT)+'</span><span class="rc-pl">'+pl+'-р байр</span><b>'+(z.name?esc(z.name):'Удахгүй зарлана')+'</b>'+(z.price?'<span class="mono mute">'+fmt(z.price)+'</span>':'')+'</div>';
+      }).join('');
+      return '<div class="rc-per"><div class="rc-hd"><h3>'+LB_NAME[per]+'</h3><span class="mono mute">'+(end?left+' хоногийн дараа шалгаруулна':'Нэр хүндийн шагнал')+'</span></div><div class="rc-grid">'+cards+'</div></div>';
+    }).join('');
   }
   function loadLb(){
-    return api.leaderboard().then(function(rows){LB_ROWS=rows;LB_ERR=false;renderLb()},function(){LB_ERR=true;LB_ROWS=LB_ROWS||[];renderLb()});
+    return Promise.all([
+      api.leaderboard('alltime').then(function(rows){LB_ROWS=rows;LB_ERR=false},function(){LB_ERR=true;LB_ROWS=LB_ROWS||[]}),
+      api.prizes().then(function(r){LB_PRIZE_ROWS=r},function(){})
+    ]).then(renderLb);
   }
+  function loadLbPeriod(per){
+    LB_PERIOD=per; renderLb();
+    if(per==='alltime') return loadLb();
+    return api.leaderboard(per).then(function(rows){LB_DATA[per]=rows;LB_ERR=false},function(){LB_DATA[per]=LB_DATA[per]||[];LB_ERR=true}).then(renderLb);
+  }
+  $('#lbTabs').addEventListener('click',function(e){var b=e.target.closest('[data-lbp]');if(b)loadLbPeriod(b.getAttribute('data-lbp'))});
+
+  /* ---------- my points (profile) ---------- */
+  function rankTxt(r){return r?'#'+r:'—'}
+  function renderMyPts(){
+    var el=$('#myPts'); if(!el||!user) return;
+    el.innerHTML='<div class="sk" style="height:150px"></div>';
+    api.myStats().then(function(st){
+      var h=st.history||[], aw=st.awards||[];
+      el.innerHTML='<div class="pts-top"><div><span class="mono mute pts-k">Миний оноо</span><div class="pts-big">'+fmtPts(st.points||0)+'<small>оноо</small></div></div><a class="btn ghost" href="#leaderboard">Жагсаалт</a></div>'+
+        '<div class="pts-stats"><div><span>Байр</span><b>'+rankTxt(st.rank)+'</b></div><div><span>Улирал</span><b>'+rankTxt(st.quarter_rank)+'</b></div><div><span>Жил</span><b>'+rankTxt(st.year_rank)+'</b></div><div><span>Худалдан авалт</span><b>'+fmt(Math.round(st.spent||0))+'</b></div><div><span>Захиалга</span><b>'+(st.orders||0)+'</b></div></div>'+
+        '<h4>Өмнөх амжилтууд</h4>'+(aw.length?'<ul class="pts-list">'+aw.map(function(a){return '<li><span><b>'+(a.place)+'-р байр</b> · '+esc(LB_NAME[a.period]||a.period)+(a.label?' '+esc(a.label):'')+(a.prize?'<br><small class="mute">'+esc(a.prize)+'</small>':'')+'</span><span class="pill'+(a.given?' fill':'')+'">'+(a.given?'Олгосон':'Хүлээгдэж буй')+'</span></li>'}).join('')+'</ul>':'<p class="mute pts-empty">Одоогоор амжилт алга.</p>')+
+        '<h4>Онооны түүх</h4>'+(h.length?'<ul class="pts-list">'+h.slice(0,12).map(function(x){return '<li><span>'+(x.kind==='order'?'Захиалга '+esc(x.ref):'Админ: '+esc(x.ref||'тохиргоо'))+'<br><small class="mute">'+fdate(x.ts)+'</small></span><b class="mono">'+(x.pts>=0?'+':'')+fmtPts(x.pts)+'</b></li>'}).join('')+'</ul>':'<p class="mute pts-empty">Захиалгаа хүлээн авмагц оноо энд бичигдэнэ.</p>')+
+        '<p class="fine mute" style="margin:12px 0 0">1,000₮ = 1 оноо. Хүргэлтийн төлбөр оноонд орохгүй. Оноог мөнгө болгон татаж авах боломжгүй.</p>';
+    },function(){el.innerHTML=''});
+  }
+
+  /* ---------- admin: leaderboard control ---------- */
+  var ADM_USERS=[];
+  function admOpts(){return ADM_USERS.map(function(u){return '<option value="'+esc(u.user_id)+'">'+esc(u.name)+' — '+esc(u.email)+' ('+fmtPts(u.points)+')</option>'}).join('')}
+  function renderAdminLb(){
+    var box=$('#adminLb'); if(!box) return;
+    if(!sb||!isAdmin){box.hidden=true;return}
+    box.hidden=false;
+    Promise.all([api.adminUsers(),api.awards(),api.prizes()]).then(function(r){
+      ADM_USERS=r[0]; var aw=r[1]; LB_PRIZE_ROWS=r[2];
+      var nm={}; ADM_USERS.forEach(function(u){nm[u.user_id]=u.name});
+      var pr=['alltime','quarter','year'].map(function(per){
+        return '<div class="adm-sub"><h4>'+LB_NAME[per]+' — шагнал</h4>'+[1,2,3].filter(function(pl){return !(per==='alltime'&&pl>1)}).map(function(pl){
+          var z=prizeFor(per,pl);
+          return '<form class="adm-prize" data-per="'+per+'" data-pl="'+pl+'"><span class="rc-img sm" data-prev>'+(z.img?'<img src="'+esc(z.img)+'" alt="">':GIFT)+'</span><span class="mono">'+pl+'-р байр</span>'+
+            '<input name="name" placeholder="Шагналын нэр" value="'+esc(z.name)+'"><input name="price" type="number" min="0" step="1000" placeholder="Үнэ ₮" value="'+(z.price||'')+'">'+
+            '<label class="btn ghost sm">Зураг<input type="file" accept="image/*" hidden data-pfile></label><input type="hidden" name="img" value="'+esc(z.img)+'"><button class="btn sm" type="submit">Хадгалах</button></form>';
+        }).join('')+'</div>';
+      }).join('');
+      var adj='<div class="adm-sub"><h4>Гараар оноо нэмэх / хасах</h4><form class="adm-row" id="admAdj"><select name="u" required>'+admOpts()+'</select><input name="d" type="number" step="0.1" placeholder="+10 эсвэл -5" required><input name="n" placeholder="Тайлбар" required><button class="btn sm" type="submit">Хэрэгжүүлэх</button></form></div>';
+      var awf='<div class="adm-sub"><h4>Ялагч бүртгэх</h4><form class="adm-row" id="admAw"><select name="u" required>'+admOpts()+'</select><select name="per"><option value="alltime">Бүх цаг</option><option value="quarter">Улирал</option><option value="year">Жил</option></select><input name="lab" placeholder="Жишээ: 2026 Q4"><select name="pl"><option>1</option><option>2</option><option>3</option></select><input name="pz" placeholder="Шагнал"><button class="btn sm" type="submit">Нэмэх</button></form>'+
+        (aw.length?'<ul class="pts-list adm-aw">'+aw.map(function(a){return '<li><span><b>'+esc(nm[a.user_id]||'—')+'</b> · '+a.place+'-р байр · '+esc(LB_NAME[a.period])+(a.period_label?' '+esc(a.period_label):'')+(a.prize?'<br><small class="mute">'+esc(a.prize)+'</small>':'')+'</span><span><button class="btn ghost sm" type="button" data-awgiven="'+a.id+'" data-v="'+(!a.given)+'">'+(a.given?'Олгосон ✓':'Олгосонд тооц')+'</button> <button class="link" type="button" data-awdel="'+a.id+'">Устгах</button></span></li>'}).join('')+'</ul>':'')+'</div>';
+      $('#adminLbBody').innerHTML=pr+adj+awf;
+    },function(){$('#adminLbBody').innerHTML='<div class="empty" style="text-align:left">Ачаалж чадсангүй.</div>'});
+  }
+  document.addEventListener('submit',function(e){
+    var f=e.target;
+    if(f.classList.contains('adm-prize')){
+      e.preventDefault(); var per=f.getAttribute('data-per'), pl=parseInt(f.getAttribute('data-pl'),10), btn=f.querySelector('[type=submit]');
+      btn.disabled=true;
+      api.savePrize({period:per,place:pl,name:f.name.value.trim()||null,image_url:f.img.value||null,price:parseInt(f.price.value,10)||null}).then(function(){toast('Шагнал хадгалагдлаа');return api.prizes()}).then(function(r){LB_PRIZE_ROWS=r;renderLb()},function(){toast('Хадгалж чадсангүй')}).then(function(){btn.disabled=false});
+    }else if(f.id==='admAdj'){
+      e.preventDefault(); var d=parseFloat(f.d.value); if(!d) return;
+      api.adjustPoints(f.u.value,d,f.n.value.trim()).then(function(){toast('Оноо шинэчлэгдлээ');renderAdminLb();loadLb()},function(){toast('Амжилтгүй боллоо')});
+    }else if(f.id==='admAw'){
+      e.preventDefault();
+      api.addAward({user_id:f.u.value,period:f.per.value,period_label:f.lab.value.trim()||null,place:parseInt(f.pl.value,10),prize:f.pz.value.trim()||null}).then(function(){toast('Ялагч бүртгэгдлээ');renderAdminLb()},function(){toast('Амжилтгүй боллоо')});
+    }
+  });
+  document.addEventListener('change',function(e){
+    var inp=e.target; if(!inp.matches||!inp.matches('[data-pfile]')) return;
+    var f=inp.closest('form'), file=inp.files&&inp.files[0]; if(!file) return;
+    squareJpeg(file,400).then(function(d){f.img.value=d;f.querySelector('[data-prev]').innerHTML='<img src="'+d+'" alt="">';toast('Зураг сонгогдлоо. "Хадгалах" дарна уу.')},function(){toast('Зургийг уншиж чадсангүй.')});
+  });
+  document.addEventListener('click',function(e){
+    var g=e.target.closest&&e.target.closest('[data-awgiven]'), d=e.target.closest&&e.target.closest('[data-awdel]');
+    if(g) api.setAwardGiven(g.getAttribute('data-awgiven'),g.getAttribute('data-v')==='true').then(renderAdminLb,function(){toast('Амжилтгүй боллоо')});
+    if(d&&confirm('Устгах уу?')) api.delAward(d.getAttribute('data-awdel')).then(renderAdminLb,function(){toast('Амжилтгүй боллоо')});
+  });
 
   /* ---------- bottom tab bar ---------- */
   var shopTab=false;
@@ -1933,7 +2115,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     $('#viewProduct').hidden=(v!=='product');
     document.title=pp?pp.name+' — '+TITLE0:TITLE0;
     if(v==='admin') loadAdmin();
-    if(v==='profile') renderProfile();
+    if(v==='profile'){renderProfile();renderMyPts()}
+    if(v==='leaderboard'&&LB_PERIOD!=='alltime'&&!LB_DATA[LB_PERIOD]) loadLbPeriod(LB_PERIOD);
     if(v==='payment'){$('#payPage').innerHTML=payBox(null,'')+'<div id="proofBox"></div>';renderProof()}
     if(v==='cart') renderCart();
     if(v==='checkout'&&!CKON) renderCheckout();
