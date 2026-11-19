@@ -1286,17 +1286,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var heroIdx=0, heroSig='', heroTimer=null, heroHold=false;
   function heroSlides(){
     var out=[];
-    var top=(LB_ROWS||[]).slice(0,3), pod='';
-    for(var k=0;k<3;k++){var r=top[k]; pod+='<span class="pc"><i>'+(k+1)+'</i><span class="av">'+(r?lbAvatar(r):'')+'</span><span class="nm"'+(r?'':' style="opacity:.55"')+'>'+(r?esc(lbName(r.name)):'Сул')+'</span><b>'+(r?fmtPts(r.score)+' оноо':'—')+'</b></span>'}
-    out.push('<a class="hero-slide s-lb" href="#leaderboard"><svg class="trophy" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.500c0 3 1.500 4.500 3.600 4.800M16 6h3.500c0 3-1.500 4.500-3.600 4.800M12 13v4M8.500 20h7M9.500 17h5v3h-5z"/></svg><div class="hs-in"><div><span class="hs-kick">Тэргүүлэгчид</span><h2 class="hs-t">Тэргүүлэгч <em>болж</em> шагнал ав</h2><p class="hs-p">Илгээсэн захиалга бүр 1 оноо. Топ 3 шагналтай.</p></div><div class="hs-pod">'+pod+'</div></div></a>');
-    BANNERS.forEach(function(b){out.push('<a class="hero-slide" href="'+esc(b.href||'#shop')+'" data-go="shop" aria-label="'+esc(b.alt||'Баннер')+'"><img class="bg" src="'+esc(b.img)+'" alt="'+esc(b.alt||'')+'" draggable="false"></a>')});
     out.push('<a class="hero-slide s-ship" href="#info" data-go="info"><div class="big">12-24</div><div class="hs-in"><span class="hs-kick">Хүргэлт</span><h2 class="hs-t">12-24 цагийн дотор хүргэнэ</h2><p class="hs-p">Төлбөр орсноос хойш хурдан хүргэнэ. Банкны шилжүүлгээр төлнө.</p><span class="hs-cta">Дэлгэрэнгүй</span></div></a>');
-    var pool=PRODUCTS.filter(function(p){return p.img&&!soldOut(p.id)});
-    var pick=pool.filter(function(p){return p.old>p.price}).concat(pool.filter(function(p){return !(p.old>p.price)})).slice(0,3);
-    pick.forEach(function(p){
-      var pct=p.old>p.price?Math.round((1-p.price/p.old)*100):0;
-      out.push('<a class="hero-slide s-prod" href="#product/'+p.id+'" data-light="1"><div class="hs-in">'+(pct?'<span class="hs-tag">−'+pct+'% хямдрал</span>':'<span class="hs-kick">Онцлох бараа</span>')+'<h2 class="hs-t" style="font-size:clamp(24px,6vw,46px)">'+esc(p.name)+'</h2><p class="hs-p mono" style="opacity:1;font-weight:600">'+fmt(p.price)+'</p><span class="hs-cta">Үзэх</span></div><div class="pimg"><img src="'+esc(p.img)+'" alt="'+esc(p.name)+'" draggable="false"></div></a>');
-    });
     return out;
   }
   function renderHero(){
@@ -1304,8 +1294,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var slides=heroSlides(), sig=slides.join('').length+':'+slides.length+PRODUCTS.map(function(p){return p.id}).slice(0,12).join(',');
     if(sig===heroSig) return; heroSig=sig;
     tr.innerHTML=slides.join('');
-    $('#heroDots').innerHTML=slides.map(function(_,i){return '<button type="button" role="tab" data-hero="'+i+'" aria-label="Слайд '+(i+1)+'" aria-current="'+(i===0)+'"></button>'}).join('');
-    heroIdx=0; tr.scrollLeft=0; heroSync();
+    $('#heroDots').innerHTML=slides.length<2?'':slides.map(function(_,i){return '<button type="button" role="tab" data-hero="'+i+'" aria-label="Слайд '+(i+1)+'" aria-current="'+(i===0)+'"></button>'}).join('');
+    heroIdx=0; tr.scrollLeft=0; $$('.hero-arrow').forEach(function(a){a.hidden=slides.length<2}); heroSync();
   }
   function heroSync(){
     var tr=$('#heroTrack'), n=tr.children.length; if(!n) return;
