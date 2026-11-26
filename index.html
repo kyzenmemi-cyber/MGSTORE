@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>MGSTORE</title>
 <meta name="description" content="MGSTORE — powerbank, цэнэглэгч болон гар утасны дагалдах хэрэгсэл. 12-24 цагийн дотор хүргэнэ.">
 <link rel="canonical" href="https://mgstore-mn.vercel.app/">
@@ -25,6 +25,9 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700;800;900&family=Roboto:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+/* no page zoom: no double-tap zoom, no focus zoom on inputs */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input,select,textarea{font-size:max(16px,1em)}
 /* Layout: sticky bar, one short hero, one product grid, thin info strip, footer. Account and cart open as panels, never new pages. */
 :root{
   --bg:#ffffff; --fg:#0b0b0b; --mute:#6a6a6a; --line:#d9d9d9; --block:#eeeeee;
@@ -1996,6 +1999,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       
   }
 
+  ['gesturestart','gesturechange','gestureend'].forEach(function(t){document.addEventListener(t,function(e){e.preventDefault()},{passive:false})});
+  var _lt=0; document.addEventListener('touchend',function(e){var n=Date.now();if(n-_lt<350&&!(e.target.closest&&e.target.closest('input,textarea,select')))e.preventDefault();_lt=n},{passive:false});
   /* ---------- loader ---------- */
   function runLoader(){document.body.classList.add('ready');setTimeout(welcome,7000)}
 
