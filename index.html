@@ -345,7 +345,10 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .s-brand{background:radial-gradient(120% 140% at 85% 10%,#3a3a3a 0%,#141414 45%,#050505 100%)}
 .s-brand .hs-in,.s-ship .hs-in{max-width:68%}
 .s-brand::before{content:"mg";position:absolute;right:-2%;bottom:-18%;font-family:var(--cond);font-weight:800;font-size:clamp(180px,46vw,380px);line-height:.8;color:rgba(255,255,255,.07);letter-spacing:-.04em}
-.s-poster{background:#0b0b0b}
+.s-poster{background:var(--sk,#e2e2e2)}
+.s-poster>img.bg{opacity:0;transition:opacity .35s}
+.s-poster>img.bg.ok{opacity:1}
+@media (prefers-reduced-motion:reduce){.s-poster>img.bg{transition:none}}
 .s-ship{background:linear-gradient(135deg,#16a34a 0%,#0c5a2b 100%)}
 .s-ship .big{position:absolute;right:5%;top:50%;transform:translateY(-50%);z-index:1;font-family:var(--cond);font-weight:800;font-size:clamp(90px,26vw,220px);line-height:.8;color:rgba(255,255,255,.16);white-space:nowrap}
 .s-prod{background:linear-gradient(135deg,#f4f4f5 0%,#d9d9dc 100%);color:#0b0b0b}
@@ -548,7 +551,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   <section id="viewHome">
     <div class="wrap banner" id="banner" aria-roledescription="carousel" aria-label="Онцлох">
       <div class="hero-box" id="heroBox">
-        <div class="hero-track" id="heroTrack"></div>
+        <div class="hero-track" id="heroTrack"><div class="hero-slide sk" aria-hidden="true"></div></div>
         <button class="hero-arrow prev" type="button" id="heroPrev" aria-label="Өмнөх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
         <button class="hero-arrow next" type="button" id="heroNext" aria-label="Дараах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="hero-dots" id="heroDots" role="tablist" aria-label="Слайд сонгох"></div>
@@ -560,7 +563,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         <span class="mono mute" id="prodCount"></span>
       </div>
       <div class="filters" id="filters"></div>
-      <div class="grid" id="grid"></div>
+      <div class="grid" id="grid" aria-busy="true"><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article><article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article></div>
     </div>
 
     <div class="info" id="info">
@@ -712,6 +715,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://bblevpisgcakfwczpfwh.supabase.co" crossorigin>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 (function(){
@@ -1104,8 +1109,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   function heroSlides(){
     if(HERO_LOADING) return ['<div class="hero-slide sk" aria-hidden="true"></div>'];
     var out=POSTERS.map(function(x){
-      var im='<img class="bg" src="'+esc(x.image_url)+'" alt="" draggable="false">';
-      return x.link?'<a class="hero-slide s-poster" href="'+esc(x.link)+'"'+(/^https?:/i.test(x.link)?' target="_blank" rel="noopener"':'')+'>'+im+'</a>':'<div class="hero-slide s-poster">'+im+'</div>';
+      var im='<img class="bg" src="'+esc(x.image_url)+'" alt="" draggable="false" onload="this.classList.add(\'ok\');this.parentNode.classList.remove(\'sk\')" onerror="this.parentNode.classList.remove(\'sk\')">';
+      return x.link?'<a class="hero-slide s-poster sk" href="'+esc(x.link)+'"'+(/^https?:/i.test(x.link)?' target="_blank" rel="noopener"':'')+'>'+im+'</a>':'<div class="hero-slide s-poster sk">'+im+'</div>';
     });
     out.push('<a class="hero-slide s-ship" href="#info" data-go="info"><div class="big">12-24</div><div class="hs-in"><span class="hs-kick">Хүргэлт</span><h2 class="hs-t">12-24 цагийн дотор хүргэнэ</h2><p class="hs-p">Төлбөр орсноос хойш хурдан хүргэнэ. Банкны шилжүүлгээр төлнө.</p><span class="hs-cta">Дэлгэрэнгүй</span></div></a>');
     return out;
