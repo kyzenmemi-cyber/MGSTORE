@@ -2,6 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="utf-8">
+<script>try{history.scrollRestoration="manual"}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>MGSTORE</title>
 <meta name="description" content="MGSTORE — powerbank, цэнэглэгч болон гар утасны дагалдах хэрэгсэл. 12-24 цагийн дотор хүргэнэ.">
@@ -918,7 +919,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     $('#filters').innerHTML='<div class="chips" role="group" aria-label="Барааны төрөл">'+cats.map(function(c){return '<button class="chip" type="button" data-cat="'+esc(c)+'" aria-pressed="'+(c===FILTER)+'">'+esc(c)+'</button>'}).join('')+'</div>'+
       '<span class="sortgrp"><button class="chip favbtn" type="button" data-cat="'+(FILTER===WISHCAT?'Бүгд':WISHCAT)+'" aria-pressed="'+(FILTER===WISHCAT)+'">'+SVG_HEART+'Миний дуртай'+(nw?' ('+nw+')':'')+'</button><button class="chip sortbtn" type="button" data-sortp="asc" aria-pressed="'+(SORT==='asc')+'">Үнэ: багаас ихэд</button><button class="chip sortbtn" type="button" data-sortp="desc" aria-pressed="'+(SORT==='desc')+'">Үнэ: ихээс багад</button></span>';
   }
-  function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="sk sk-line" style="width:70%"></div><div class="sk sk-line" style="width:40%"></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
+  function skCards(n){var c='<article class="card" aria-hidden="true"><div class="sk" style="aspect-ratio:1/1;border-radius:16px"></div><div class="cbody"><div class="sk sk-line" style="width:30%;height:11px;margin:0"></div><div class="sk sk-line" style="width:85%;margin:0"></div><div class="sk sk-line" style="width:55%;margin:0"></div><div class="sk sk-line" style="width:40%;height:18px;margin:2px 0 0"></div><div class="sk" style="height:44px;border-radius:12px;margin-top:auto"></div></div></article>',h='';for(var i=0;i<n;i++)h+=c;return h}
   function skRows(n){var h='';for(var i=0;i<n;i++)h+='<div class="sk sk-row" aria-hidden="true"></div>';return h}
   // stock is per colour when a colour has its own row (key "id|colour"), otherwise per product (key id)
   function stockOf(id,opt){
@@ -985,10 +986,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var q=row.id?sb.from('products').upsert(row):sb.from('products').insert(row);
     return q.then(function(r){if(r.error)throw r.error});
   };
-  var POSTERS=[];
+  var POSTERS=[], PK='mg_posters_v1', HERO_LOADING=!!sb;
+  try{var _pc=store.get(PK,null);if(_pc&&Array.isArray(_pc)){POSTERS=_pc;HERO_LOADING=false}}catch(e){}
   local.posters=function(){return Promise.resolve([])};
   remote.posters=function(){return sb.from('posters').select('id,image_url,link,sort,active').eq('active',true).order('sort',{ascending:true}).order('id',{ascending:true}).then(function(r){if(r.error)throw r.error;return r.data})};
-  function loadPosters(){return api.posters().then(function(l){POSTERS=l;renderHero()},function(){})}
+  function loadPosters(){return api.posters().then(function(l){POSTERS=l;try{store.set(PK,l)}catch(e){}HERO_LOADING=false;renderHero()},function(){HERO_LOADING=false;renderHero()})}
   local.adminPosters=function(){return Promise.resolve([])};
   remote.adminPosters=function(){return sb.from('posters').select('id,image_url,link,sort,active').order('sort',{ascending:true}).order('id',{ascending:true}).then(function(r){if(r.error)throw r.error;return r.data})};
   local.adminSavePoster=local.adminDeletePoster=function(){return Promise.reject(new Error('admin only'))};
@@ -1075,7 +1077,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   /* ---------- products ---------- */
   function renderGrid(){
     $('#grid').setAttribute('aria-busy',GRID_LOADING?'true':'false');
-    if(GRID_LOADING){$('#prodCount').textContent='';$('#grid').innerHTML=skCards(6);return}
+    if(GRID_LOADING){$('#prodCount').textContent='';$('#grid').innerHTML=skCards(8);return}
     var LIST=viewList(); renderFilters();
     $('#prodCount').textContent = LIST.length + ' бараа';
     if(!LIST.length){$('#grid').innerHTML='<div class="empty" style="grid-column:1/-1;text-align:left">'+(FILTER===WISHCAT?'Хадгалсан бараа алга байна. Барааны зураг дээрх ♡ дээр дарж хадгална уу.':'Энэ төрөлд бараа алга.')+'</div>';return}
@@ -1100,6 +1102,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var BANNERS=[];
   var heroIdx=0, heroSig='', heroTimer=null, heroHold=false;
   function heroSlides(){
+    if(HERO_LOADING) return ['<div class="hero-slide sk" aria-hidden="true"></div>'];
     var out=POSTERS.map(function(x){
       var im='<img class="bg" src="'+esc(x.image_url)+'" alt="" draggable="false">';
       return x.link?'<a class="hero-slide s-poster" href="'+esc(x.link)+'"'+(/^https?:/i.test(x.link)?' target="_blank" rel="noopener"':'')+'>'+im+'</a>':'<div class="hero-slide s-poster">'+im+'</div>';
@@ -2014,11 +2017,12 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     el.classList.add('rv'); el.style.setProperty('--d',((i%2)*.09)+'s');
     if(RVIO) RVIO.observe(el); else el.classList.add('in');
   })}
-  var _rg=renderGrid; renderGrid=function(){_rg();if(!GRID_LOADING)renderHero();reveal('#grid .card:not([aria-hidden])')};
+  var _rg=renderGrid; renderGrid=function(){_rg();renderHero();reveal('#grid .card:not([aria-hidden])')};
   var REVSEL='.section-head,.filters,.info .wrap>*,.site-foot .wrap>*,.how li';
   reveal(REVSEL);
-  renderGrid(); renderCart(); runLoader(); loadStock(); loadReviews(); loadPosters(); 
+  window.scrollTo(0,0); renderGrid(); renderHero(); renderCart(); runLoader(); loadStock(); loadReviews(); loadPosters(); 
   setTimeout(function(){if(GRID_LOADING){GRID_LOADING=false;renderGrid()}},8000);
+  setTimeout(function(){if(HERO_LOADING){HERO_LOADING=false;renderHero()}},4000);
   api.init().then(function(u){user=u},function(){}).then(syncAccount);
 })();
 </script>
