@@ -232,6 +232,8 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .left.lg i{width:8px;height:8px;border-radius:50%;background:currentColor}
 .left.lg.low{color:#b91c1c;background:#fee2e2}
 .card .left{margin:0 0 4px}
+.lowrow{min-height:22px;margin:0 0 4px;display:flex;align-items:center}
+.lowpill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:700;line-height:1.3;letter-spacing:.01em;white-space:nowrap}
 .card .cbody>.add{flex:none}
 .card .cbody>.add:first-of-type{margin-top:auto}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
@@ -1154,15 +1156,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   }
   function cardHtml(p){
       var gone=soldOut(p.id), left=leftOf(p.id), pct=p.old>p.price?Math.round((1-p.price/p.old)*100):0, rl=revOf(p.id);
-      var lowB=(!gone&&left!==undefined&&left>0&&left<=3)?'<span class="badge low-b'+(pct>0?' under':'')+'">Сүүлийн '+left+'</span>':'';
-      var badge=gone?'<span class="badge">Дууссан</span>':(pct>0?'<span class="badge sale-b">−'+pct+'%</span>':'')+lowB;
+      var lowP='<div class="lowrow">'+((!gone&&left!==undefined&&left>0&&left<=3)?'<span class="lowpill">Сүүлийн '+left+' ширхэг</span>':'')+'</div>';
+      var badge=gone?'<span class="badge">Дууссан</span>':(pct>0?'<span class="badge sale-b">−'+pct+'%</span>':'');
       var dots=(p.colors&&p.colors.length>1&&p.colors.some(function(c){return c.img}))?'<div class="dots" role="group" aria-label="Өнгө">'+p.colors.slice(0,6).map(function(c,i){return '<button type="button" data-cc="'+p.id+':'+i+'" aria-label="'+esc(c.n)+'" aria-pressed="'+(i===0)+'"></button>'}).join('')+'</div>':'';
       return '<article class="card">'+
         '<div class="media'+(dots?' sw':'')+'"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
         '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
-        '<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+
+        lowP+'<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
