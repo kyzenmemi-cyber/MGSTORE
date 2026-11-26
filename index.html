@@ -189,7 +189,7 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card .ph::after{content:"";position:absolute;left:18%;right:18%;bottom:11%;height:10px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.16),transparent);pointer-events:none}
 .card .ph .qv{display:none}
 .card .ph img{-webkit-user-drag:none;user-select:none}
-.card .media.sw{touch-action:pan-y}
+.card .media.sw{touch-action:pan-y;margin-top:0;gap:0;display:block}
 @keyframes cardIn{from{opacity:.15;transform:translateX(var(--dx,24px))}to{opacity:1;transform:none}}
 .card .ph img.swin{animation:cardIn .3s cubic-bezier(.2,.7,.2,1)}
 @media (prefers-reduced-motion:reduce){.card .ph img.swin{animation:none}}
@@ -208,12 +208,12 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .dots button::before{content:"";width:8px;height:8px;border-radius:50%;background:#c4c4c4;transition:transform .2s,background .2s}
 .dots button[aria-pressed="true"]::before{background:#111;transform:scale(1.25)}
 .cbody{padding:12px 2px 0;display:flex;flex-direction:column;gap:5px;flex:1}
-.ccat{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.ccat{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .card h3{margin:0;font-size:15px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
 .card .price{font-family:var(--mono);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-.card .prow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card .prow{min-height:1.6em;display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .card .rate-line{min-height:0;font-size:12px;margin:2px 0 10px}
-.card .add{margin-top:10px;width:100%;height:44px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--fg);transition:transform .15s,opacity .2s}
+.card .add{margin-top:auto;width:100%;height:44px;border-radius:12px;background:var(--fg);color:var(--bg);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--fg);transition:transform .15s,opacity .2s}
 .card .add svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .card .add:active{transform:scale(.97)}
 .card .add:disabled{background:transparent;color:var(--mute);border-color:var(--line);cursor:default}
@@ -227,6 +227,8 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .left.lg i{width:8px;height:8px;border-radius:50%;background:currentColor}
 .left.lg.low{color:#b91c1c;background:#fee2e2}
 .card .left{margin:0 0 4px}
+.card .cbody>.add{flex:none}
+.card .cbody>.add:first-of-type{margin-top:auto}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
 
 .info{border-block:1px solid var(--line)}
@@ -1084,7 +1086,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         '<div class="media'+(dots?' sw':'')+'"><button class="ph" type="button" data-qv="'+p.id+'" aria-label="'+esc(p.name)+'">'+pic(p)+'</button>'+badge+
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
-        '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+(gone?'':leftHtml(left))+
+        '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
         '<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
