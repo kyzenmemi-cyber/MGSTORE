@@ -1028,8 +1028,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     els.forEach(function(e){e.textContent='Дуусахад: '+leftTxt(+e.getAttribute('data-ends'))});
   },1000);
   // catalog: the built-in list above plus the admin's changes (a row with a built-in id overrides it, a new id adds a product, active=false hides it)
+  var DELETED={};
   function applyCatalog(rows){
-    var all=BASE.map(function(p){return Object.assign({},p)}), news=[];
+    var all=BASE.filter(function(p){return !DELETED[p.id]}).map(function(p){return Object.assign({},p)}), news=[];
     rows.forEach(function(r){
       var p=all.filter(function(x){return x.id===r.id})[0];
       var d={name:r.name,price:r.price,old:r.old_price||undefined,desc:r.description||'',hidden:!r.active,ends:(r.sale_ends&&r.old_price)?Date.parse(r.sale_ends):0};
@@ -1042,8 +1043,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   }
   // cache (stale-while-revalidate): the last catalog and stock are shown at once, then refreshed from the server; the server still checks stock when an order is placed
   var CK='mg_cache_v1', CTTL=864e5, CROWS=[];
-  function saveCache(){if(sb){try{store.set(CK,{t:Date.now(),rows:CROWS,stock:STOCK})}catch(e){}}}
-  function loadCatalog(){return api.catalog().then(function(rows){CROWS=rows;applyCatalog(rows)},function(){})}
+  function saveCache(){if(sb){try{store.set(CK,{t:Date.now(),rows:CROWS,stock:STOCK,del:Object.keys(DELETED)})}catch(e){}}}
+  function loadCatalog(){return Promise.all([api.catalog(),api.deletedIds().catch(function(){return null})]).then(function(r){if(r[1]){DELETED={};r[1].forEach(function(id){DELETED[id]=1})}CROWS=r[0];applyCatalog(r[0])},function(){})}
   local.catalog=function(){return Promise.resolve([])};
   function priceHtml(p){return p.old>p.price?'<b class="sale">'+fmt(p.price)+'</b><s class="was">'+fmt(p.old)+'</s>':fmt(p.price)}
   remote.catalog=function(){return sb.from('products').select('id,name,price,old_price,description,image_url,active,category,options,sale_ends').then(function(r){if(r.error)throw r.error;return r.data})};
@@ -1676,13 +1677,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       return '<div class="aorder" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="width:52px;height:52px;flex:none;background:var(--block);display:flex;align-items:center;justify-content:center;overflow:hidden">'+(r.img?'<img src="'+esc(r.img)+'" alt="" style="max-width:100%;max-height:100%;object-fit:contain">':'')+'</span>'+
         '<span style="flex:1;min-width:160px">'+esc(r.label)+' <span class="mono mute">'+fmt(p.price)+'</span>'+(p.hidden?' <b class="mute">(нуусан)</b>':'')+'</span>'+
         '<button class="link" type="button" data-tip="Барааны мэдээлэл, зургийг засах" data-pedit="'+p.id+'">Засах</button>'+
-        (p.hidden&&p.id<400001?'':'<button class="link" type="button" data-pdel="'+p.id+'" style="color:#d33">Устгах</button>')+
+        '<button class="link" type="button" data-pdel="'+p.id+'" style="color:#d33">Устгах</button>'+
         '<span class="mute">'+(q===undefined?(r.inherit?'Өнгө/барааны нийт тоо ашиглаж байна':'Тоо оруулаагүй'):q<=0?'Дууссан':'Үлдсэн')+'</span>'+
         '<input type="number" min="0" step="1" inputmode="numeric" data-stock-in="'+esc(r.key)+'" value="'+(q===undefined?'':q)+'" style="width:90px;padding:8px;border:1px solid var(--line);font:inherit" aria-label="Үлдэгдэл: '+esc(r.label)+'">'+
         '<button class="link" type="button" data-tip="Үлдэгдлийг хадгалах" data-stock-save="'+esc(r.key)+'">Хадгалах</button></div>';
     }).join('');
   }
-  remote.adminDeleteProduct=function(id){return sb.from('products').delete().eq('id',id).then(function(r){if(r.error)throw r.error})};
+  remote.adminDeleteProduct=function(id){return sb.rpc('admin_delete_product',{p_id:id}).then(function(r){if(r.error)throw r.error})};
+  remote.deletedIds=function(){return sb.from('deleted_products').select('product_id').then(function(r){if(r.error)throw r.error;return r.data.map(function(x){return x.product_id})})};
+  local.deletedIds=function(){return Promise.resolve([])};
   local.adminDeleteProduct=function(){return Promise.reject(new Error('admin only'))};
   function openProd(id){
     var p=id?ALLP.filter(function(x){return x.id===id})[0]:null, custom=!!p&&p.id>=400001;
@@ -1702,9 +1705,9 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       '<img id="prPrev" alt="Зургийн урьдчилсан харалт" '+(p&&p.img?'src="'+esc(p.img)+'"':'hidden')+' style="max-width:100%;max-height:200px;border:1px solid var(--line);margin-bottom:14px">'+
       '<label style="display:flex;gap:8px;align-items:center;margin:0 0 14px"><input id="prOn" type="checkbox"'+((!p||!p.hidden)?' checked':'')+'> Сайтад харуулах</label>'+
       '<p class="err" id="prErr"></p><button class="btn block" type="submit">Хадгалах</button>'+
-      (custom?'<button class="btn ghost block" type="button" id="prDel" style="margin-top:10px">Устгах</button>':'')+'</form>',true);
+      (p?'<button class="btn ghost block" type="button" id="prDel" style="margin-top:10px">Устгах</button>':'')+'</form>',true);
     $('#prFile').onchange=function(){var f=this.files[0],im=$('#prPrev');$('#prErr').textContent='';if(f&&/^image\//.test(f.type)){im.src=URL.createObjectURL(f);im.hidden=false}};
-    if(custom){var d=$('#prDel');d.onclick=function(){
+    if(p){var d=$('#prDel');d.onclick=function(){
       if(!d.getAttribute('data-sure')){d.setAttribute('data-sure','1');d.textContent='Дахин дарж устгахаа баталгаажуулна уу';return}
       d.disabled=true;
       api.adminDeleteProduct(p.id).then(function(){return loadCatalog()}).then(function(){closeModal();renderGrid();renderAdminStock();toast('Бараа устгагдлаа')},function(){d.disabled=false;$('#prErr').textContent='Устгаж чадсангүй. Дахин оролдоно уу.'});
@@ -1960,8 +1963,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       if(!pd.getAttribute('data-sure')){pd.setAttribute('data-sure','1');pd.textContent='Баталгаажуулах';setTimeout(function(){if(pd.isConnected){pd.removeAttribute('data-sure');pd.textContent='Устгах'}},4000);return}
       var pid=parseInt(pd.getAttribute('data-pdel'),10), pp=ALLP.filter(function(x){return x.id===pid})[0]; if(!pp)return;
       pd.disabled=true;
-      var job=pid>=400001?api.adminDeleteProduct(pid):api.adminSaveProduct({id:pid,name:pp.name,price:pp.price,description:pp.desc||'',active:false});
-      job.then(function(){return loadCatalog()}).then(function(){renderGrid();renderAdminStock();toast(pid>=400001?'Бараа устгагдлаа':'Бараа сайтаас нуугдлаа')},function(){pd.disabled=false;pd.textContent='Устгах';pd.removeAttribute('data-sure');toast('Устгаж чадсангүй. Дахин оролдоно уу.')});
+      var job=api.adminDeleteProduct(pid);
+      job.then(function(){return loadCatalog()}).then(function(){renderGrid();renderAdminStock();toast('Бараа бүр мөсөн устгагдлаа')},function(){pd.disabled=false;pd.textContent='Устгах';pd.removeAttribute('data-sure');toast('Устгаж чадсангүй. Дахин оролдоно уу.')});
       return;
     }
     var pa=e.target.closest('[data-padd],[data-pedit]');
@@ -2088,7 +2091,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   /* ---------- theme switch ---------- */
 
   var cacheHit=sb?store.get(CK,null):null;
-  if(cacheHit&&Array.isArray(cacheHit.rows)&&Date.now()-cacheHit.t<CTTL){CROWS=cacheHit.rows;applyCatalog(cacheHit.rows);STOCK=cacheHit.stock||{};GRID_LOADING=false}
+  if(cacheHit&&Array.isArray(cacheHit.rows)&&Date.now()-cacheHit.t<CTTL){CROWS=cacheHit.rows;(cacheHit.del||[]).forEach(function(id){DELETED[id]=1});applyCatalog(cacheHit.rows);STOCK=cacheHit.stock||{};GRID_LOADING=false}
   var RVIO=window.IntersectionObserver?new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');RVIO.unobserve(en.target)}})},{threshold:.08,rootMargin:'0px 0px -4% 0px'}):null;
   function reveal(sel){$$(sel).forEach(function(el,i){
     if(el.classList.contains('rv')) return;
