@@ -368,6 +368,37 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum .tot .mono{font-size:26px;font-weight:800;letter-spacing:-.01em}
 @media (hover:hover){.pm-pay:hover{box-shadow:0 14px 28px rgba(0,0,0,.28)}}
 @media (prefers-reduced-motion:reduce){.pm-pay,.pm-qty button{transition:none}}
+/* leaderboard */
+.lb{padding-top:30px}
+.lb-box{position:relative;overflow:hidden;border-radius:22px;padding:22px 14px 14px;color:#fff;background:radial-gradient(120% 90% at 100% 0%,#3a2f12 0%,#141414 40%,#050505 100%)}
+@media (min-width:700px){.lb-box{padding:34px 34px 22px}}
+.lb-head{display:flex;align-items:center;gap:14px;padding:0 6px 18px}
+.lb-trophy{width:46px;height:46px;flex:none;border-radius:14px;background:#f5c451;color:#2a1f00;display:grid;place-items:center}
+.lb-trophy svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.lb-head h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:clamp(26px,6vw,40px);line-height:1}
+.lb-head p{margin:4px 0 0;font-size:13px;opacity:.72}
+.lb-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lb-row{display:grid;grid-template-columns:34px 44px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:10px 10px;border-radius:14px;background:rgba(255,255,255,.05);--c:rgba(255,255,255,.35)}
+.lb-row.top{padding:14px 10px;background:linear-gradient(90deg,color-mix(in srgb,var(--c) 22%,transparent),rgba(255,255,255,.05));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
+.lb-row.g1{--c:#f5c451}.lb-row.g2{--c:#cfd3d9}.lb-row.g3{--c:#d98f55}
+.lb-row.empty{opacity:.42}
+.lb-rank{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;background:rgba(255,255,255,.1)}
+.top .lb-rank{background:var(--c);color:#1a1a1a;width:32px;height:32px}
+.lb-av{width:44px;height:44px;border-radius:50%;overflow:hidden;background:#2b2b2b;display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+.top .lb-av{width:50px;height:50px;box-shadow:0 0 0 2px var(--c)}
+.lb-av img{width:100%;height:100%;object-fit:cover;display:block}
+.lb-nm{min-width:0}
+.lb-nm b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .lb-nm b{font-size:16px}
+.lb-nm small{display:block;font-size:12px;color:var(--c);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-pt{text-align:right;font-family:var(--mono);font-weight:700;font-size:18px;line-height:1}
+.lb-pt small{display:block;font-size:10px;font-weight:400;opacity:.65;margin-top:3px;letter-spacing:.06em}
+.lb-prize{width:54px;height:54px;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1.5px var(--c);color:var(--c)}
+.lb-prize img{width:100%;height:100%;object-fit:cover;display:block}
+.lb-prize svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lb-row:not(.top) .lb-prize{display:none}
+.lb-foot{margin:14px 6px 4px;font-size:12px;opacity:.6;text-align:center}
+@media (max-width:420px){.lb-row{grid-template-columns:30px 40px minmax(0,1fr) auto auto;gap:8px}.lb-prize{width:46px;height:46px}}
 /* notifications prompt */
 .np-card{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 18px}
 .np-card b{display:block}.np-card .mute{font-size:13px}
@@ -610,6 +641,16 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         <button class="hero-arrow prev" type="button" id="heroPrev" aria-label="Өмнөх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
         <button class="hero-arrow next" type="button" id="heroNext" aria-label="Дараах"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
         <div class="hero-dots" id="heroDots" role="tablist" aria-label="Слайд сонгох"></div>
+      </div>
+    </div>
+    <div class="wrap lb" id="leaderboard" aria-labelledby="lbTitle">
+      <div class="lb-box">
+        <div class="lb-head">
+          <span class="lb-trophy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 14v4M8 20h8"/></svg></span>
+          <div><h2 id="lbTitle">Тэргүүлэгчид</h2><p>Илгээгдсэн захиалга бүр = 1 оноо</p></div>
+        </div>
+        <ol class="lb-list" id="lbList"></ol>
+        <p class="lb-foot">Зөвхөн манай дэлгүүрээс илгээсэн захиалга оноонд тооцогдоно.</p>
       </div>
     </div>
     <div class="wrap" id="shop" style="padding-top:4px">
@@ -1045,6 +1086,8 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   var CK='mg_cache_v1', CTTL=864e5, CROWS=[];
   function saveCache(){if(sb){try{store.set(CK,{t:Date.now(),rows:CROWS,stock:STOCK,del:Object.keys(DELETED)})}catch(e){}}}
   function loadCatalog(){return Promise.all([api.catalog(),api.deletedIds().catch(function(){return null})]).then(function(r){if(r[1]){DELETED={};r[1].forEach(function(id){DELETED[id]=1})}CROWS=r[0];applyCatalog(r[0])},function(){})}
+  local.leaderboard=function(){return Promise.resolve([])};
+  remote.leaderboard=function(){return sb.rpc('get_leaderboard').then(function(r){if(r.error)throw r.error;return r.data||[]})};
   local.catalog=function(){return Promise.resolve([])};
   function priceHtml(p){return p.old>p.price?'<b class="sale">'+fmt(p.price)+'</b><s class="was">'+fmt(p.old)+'</s>':fmt(p.price)}
   remote.catalog=function(){return sb.from('products').select('id,name,price,old_price,description,image_url,active,category,options,sale_ends').then(function(r){if(r.error)throw r.error;return r.data})};
@@ -1164,6 +1207,29 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
+
+  /* ---------- leaderboard ---------- */
+  // Prizes for places 1-3. Put a picture file in the repo (e.g. prizes/1.jpg) and set img:'prizes/1.jpg' when you know the prizes.
+  var PRIZES=[{name:'Шагнал удахгүй зарлагдана',img:''},{name:'Шагнал удахгүй зарлагдана',img:''},{name:'Шагнал удахгүй зарлагдана',img:''}];
+  var SVG_GIFT='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="8.5" width="17" height="4" rx="1"/><path d="M5 12.5V20h14v-7.5M12 8.5V20M12 8.5C10 8.5 8 7.8 8 6a2 2 0 0 1 4 0M12 8.5c2 0 4-.7 4-2.5a2 2 0 0 0-4 0"/></svg>';
+  function renderLeaderboard(list){
+    var html='';
+    for(var i=0;i<10;i++){
+      var r=list[i], top=i<3, pz=PRIZES[i]||{};
+      var av=r?(r.avatar?'<img src="'+esc(r.avatar)+'" alt="" loading="lazy">':esc((r.display_name||'?').trim().charAt(0).toUpperCase())):'?';
+      html+='<li class="lb-row'+(top?' top g'+(i+1):'')+(r?'':' empty')+'">'+
+        '<span class="lb-rank" aria-label="'+(i+1)+'-р байр">'+(i+1)+'</span>'+
+        '<span class="lb-av">'+av+'</span>'+
+        '<span class="lb-nm"><b>'+(r?esc(r.display_name||'Хэрэглэгч'):'Сул байр')+'</b>'+(top?'<small>'+esc(pz.name||'')+'</small>':'')+'</span>'+
+        '<span class="lb-pt">'+(r?r.points:0)+'<small>ОНОО</small></span>'+
+        (top?'<span class="lb-prize" aria-label="Шагнал">'+(pz.img?'<img src="'+esc(pz.img)+'" alt="'+esc(pz.name||'Шагнал')+'">':SVG_GIFT)+'</span>':'<span></span>')+
+      '</li>';
+    }
+    $('#lbList').innerHTML=html;
+  }
+  function loadLeaderboard(){api.leaderboard().then(renderLeaderboard,function(){})}
+  renderLeaderboard([]); loadLeaderboard();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)loadLeaderboard()});
 
   /* ---------- hero slider ---------- */
   // Own banner pictures: put files in the repo (e.g. banners/1.jpg) and list them here as {img:'banners/1.jpg', href:'#shop', alt:'...'}
