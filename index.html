@@ -313,6 +313,61 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum{border:1px solid var(--line);padding:22px;display:grid;gap:14px;position:sticky;top:84px}
 .cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
 .cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
+
+/* premium checkout look */
+:root{--pm-card:#fff;--pm-tint:#f4f6fa;--pm-line:#e8ebf2;--pm-shadow:0 10px 30px rgba(40,60,100,.09);--pm-btn:linear-gradient(110deg,#0b0b0b,#3b3b3b)}
+:root[data-theme="dark"]{--pm-card:#171717;--pm-tint:#1f1f1f;--pm-line:#2c2c2c;--pm-shadow:0 10px 30px rgba(0,0,0,.45);--pm-btn:linear-gradient(110deg,#f1f1f1,#cfcfcf)}
+.pm{max-width:600px;padding-top:12px;padding-bottom:40px}
+.pm-card,.cp-sum,.ck-sec{background:var(--pm-card);border:1px solid var(--pm-line);border-radius:24px;box-shadow:var(--pm-shadow)}
+.pm-card{padding:22px 18px 20px}
+.pm-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.pm-kick{display:block;font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.pm-hd h1{margin:0;font-size:clamp(22px,6vw,28px);line-height:1.15;font-family:var(--display);font-weight:800;text-transform:none;letter-spacing:-.01em}
+.pm-sub{margin:6px 0 0;font-size:13px;color:var(--mute);line-height:1.4}
+.pm-ico{flex:none;width:44px;height:44px;border-radius:14px;background:var(--pm-tint);display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--pm-line)}
+.pm-ico svg,.pm-chip svg,.pm-secure svg,.pm-pay svg,.pm-lock svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.pm-items{display:grid;gap:10px}
+.pm-item{display:grid;grid-template-columns:76px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:18px;background:var(--pm-card);box-shadow:0 4px 16px rgba(40,60,100,.08),0 0 0 1px var(--pm-line)}
+.pm-item .ph{width:76px;aspect-ratio:1;border-radius:14px;background:linear-gradient(145deg,var(--pm-tint),var(--pm-card))}
+.pm-it{display:grid;gap:3px;min-width:0}
+.pm-name{font-weight:700;font-size:14px;line-height:1.3;text-decoration:none;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pm-opt{font-size:12px;color:var(--mute)}
+.pm-price{font-size:14px}
+.pm-side{display:grid;gap:8px;justify-items:end}
+.pm-qty{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:12px;background:var(--pm-tint);box-shadow:inset 0 0 0 1px var(--pm-line)}
+.pm-qty button{width:30px;height:30px;border-radius:9px;font-size:17px;font-weight:600;line-height:1;transition:background .15s,transform .15s}
+.pm-qty button:hover{background:var(--pm-card)}
+.pm-qty button:active{transform:scale(.9)}
+.pm-qty output{min-width:24px;text-align:center;font-family:var(--mono);font-size:13px;font-weight:700}
+.pm-rm{font-size:12px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+.pm-rows{display:grid;gap:12px;margin:18px 4px 0;padding-top:4px;font-size:14px;color:var(--mute)}
+.pm-rows>div{display:flex;justify-content:space-between;gap:12px}
+.pm-rows .mono{color:var(--fg);font-size:14px;text-transform:none;letter-spacing:0}
+.pm-total{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 4px 0;padding-top:16px;border-top:1px dashed var(--pm-line)}
+.pm-total b{display:block;font-size:15px}.pm-total small{color:var(--mute);font-size:12px}
+.pm-amt{font-size:clamp(24px,7vw,30px);font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.pm-method{margin-top:18px;padding:14px;border-radius:18px;background:var(--pm-tint);box-shadow:inset 0 0 0 1px var(--pm-line)}
+.pm-mh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-size:14px}
+.pm-secure{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#16a34a}
+.pm-secure svg{width:15px;height:15px}
+.pm-chips{display:flex;gap:8px;flex-wrap:wrap}
+.pm-chip{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:var(--pm-card);font-weight:600;font-size:13px;box-shadow:0 2px 8px rgba(40,60,100,.08),0 0 0 1px var(--pm-line)}
+.pm-chip svg{width:18px;height:18px}
+.pm-pay{width:100%;margin-top:18px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--pm-btn);color:#fff;font-weight:700;font-size:16px;box-shadow:0 10px 22px rgba(0,0,0,.22);transition:transform .15s,box-shadow .15s,opacity .2s}
+:root[data-theme="dark"] .pm-pay{color:#0b0b0b}
+.pm-pay:active{transform:scale(.98);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.pm-pay:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.pm-lock{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 0 0;font-size:12px;color:var(--mute)}
+.pm-lock svg{width:14px;height:14px}
+.cp-sum,.ck-sec{padding:20px}
+.cp-sum h2{font-family:var(--display);text-transform:none;font-size:22px;letter-spacing:-.01em}
+.ck-sec h2{font-family:var(--display);text-transform:none;font-size:18px}
+.ck-n{border-radius:50%}
+.ck-line .ph{border-radius:12px}
+.cp-sum .tot{border-top:1px dashed var(--pm-line);font-size:20px;font-weight:800}
+.cp-sum .tot .mono{font-size:26px;font-weight:800;letter-spacing:-.01em}
+@media (hover:hover){.pm-pay:hover{box-shadow:0 14px 28px rgba(0,0,0,.28)}}
+@media (prefers-reduced-motion:reduce){.pm-pay,.pm-qty button{transition:none}}
 /* notifications prompt */
 .np-card{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 18px}
 .np-card b{display:block}.np-card .mute{font-size:13px}
@@ -632,18 +687,25 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   </section>
 
   <section id="viewCart" hidden>
-    <div class="cp">
+    <div class="wrap pm">
       <a class="link back" href="#home">Дэлгүүр лүү буцах</a>
-      <h1>Сагс</h1>
-      <div class="cp-grid">
-        <div class="lines" id="cartLines"></div>
-        <aside class="cp-sum" aria-label="Захиалгын дэлгэрэнгүй">
-          <h2>Захиалгын дэлгэрэнгүй</h2>
-          <div class="sub"><span>Бараа</span><span id="subtotal" class="mono">0₮</span></div>
-          <div class="sub"><span>Хүргэлт</span><span id="cartShip" class="mono">0₮</span></div>
-          <div class="sub tot"><span>Нийт дүн</span><span id="cartTotal" class="mono">0₮</span></div>
-          <button class="btn block" type="button" id="checkoutBtn">Захиалах</button>
-        </aside>
+      <div class="pm-card">
+        <div class="pm-hd">
+          <div><span class="pm-kick">Захиалга</span><h1>Захиалгаа баталгаажуулна уу</h1><p class="pm-sub">Нэг алхам үлдлээ. Төлбөр орсноос хойш 12-24 цагийн дотор хүргэнэ.</p></div>
+          <span class="pm-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></svg></span>
+        </div>
+        <div class="pm-items" id="cartLines"></div>
+        <div class="pm-rows" aria-label="Захиалгын дэлгэрэнгүй">
+          <div><span>Барааны дүн</span><span id="subtotal" class="mono">0₮</span></div>
+          <div><span>Хүргэлт</span><span id="cartShip" class="mono">0₮</span></div>
+        </div>
+        <div class="pm-total"><div><b>Нийт дүн</b><small>Хүргэлт орсон дүн</small></div><span id="cartTotal" class="pm-amt">0₮</span></div>
+        <div class="pm-method">
+          <div class="pm-mh"><b>Төлбөрийн хэлбэр</b><span class="pm-secure"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.500-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Найдвартай</span></div>
+          <div class="pm-chips"><span class="pm-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v8M9.500 10v8M14.500 10v8M19 10v8M3 20h18"/></svg>Банкны шилжүүлэг</span></div>
+        </div>
+        <button class="pm-pay" type="button" id="checkoutBtn">Захиалах<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <p class="pm-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Таны мэдээлэл найдвартай хамгаалагдана</p>
       </div>
     </div>
   </section>
@@ -1229,10 +1291,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     var shp=n?delivery():0; $('#cartShip').textContent=n?(shp?fmt(shp):'Үнэгүй'):fmt(0); $('#cartTotal').textContent=fmt(total()+shp);
     $('#checkoutBtn').disabled = !n;
     $('#cartLines').innerHTML = n ? cart.map(function(c){
-      var p = byId(c.id);
-      return '<div class="line"><div class="ph">'+linePic(c,p)+'</div><div><h4><a href="#product/'+p.id+'">'+esc(p.name)+'</a></h4>'+(c.opt?'<div class="fine" style="margin:0 0 6px">'+esc(c.opt)+'</div>':'')+
-        '<div class="qty"><button type="button" data-dec="'+p.id+'" data-o="'+esc(c.opt||'')+'" aria-label="Багасгах" data-tip="Багасгах">&minus;</button><output>'+c.qty+'</output><button type="button" data-inc="'+p.id+'" data-o="'+esc(c.opt||'')+'" aria-label="Нэмэх" data-tip="Нэмэх">+</button></div></div>'+
-        '<div style="text-align:right"><div class="mono">'+fmt(p.price*c.qty)+'</div><button class="link" type="button" data-rm="'+p.id+'" data-o="'+esc(c.opt||'')+'" data-tip="Сагснаас хасах" style="font-size:12px;margin-top:10px">Хасах</button></div></div>';
+      var p = byId(c.id), o=esc(c.opt||'');
+      return '<div class="pm-item"><div class="ph">'+linePic(c,p)+'</div><div class="pm-it"><a class="pm-name" href="#product/'+p.id+'">'+esc(p.name)+'</a>'+(c.opt?'<span class="pm-opt">'+esc(c.opt)+'</span>':'')+
+        '<b class="pm-price mono">'+fmt(p.price*c.qty)+'</b></div>'+
+        '<div class="pm-side"><div class="pm-qty"><button type="button" data-dec="'+p.id+'" data-o="'+o+'" aria-label="Багасгах">&minus;</button><output>'+c.qty+'</output><button type="button" data-inc="'+p.id+'" data-o="'+o+'" aria-label="Нэмэх">+</button></div>'+
+        '<button class="pm-rm" type="button" data-rm="'+p.id+'" data-o="'+o+'">Хасах</button></div></div>';
     }).join('') : '<div class="empty">Таны сагс хоосон байна.</div>';
   }
   function lockOff(){if(!modalOpen()&&!$('#menu').classList.contains('on')){$('#scrim').classList.remove('on');document.body.classList.remove('locked')}}
@@ -1531,11 +1594,11 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
           '<div class="pay-row"><span class="mute">Нэр</span><span>'+esc(BANK.name)+'</span></div>'+
           '<div class="pay-row"><span class="mute">Төлөх дүн</span><span class="mono" style="font-weight:700">'+fmt(sum+dlv)+'</span></div></div>'+
           '<p class="fine" style="margin-bottom:0">Төлбөр орж ирснээс хойш 12-24 цагийн дотор хүргэнэ.</p></section>'+
-      '</div><aside class="cp-sum" aria-label="Захиалгын дүн"><h2>Таны захиалга</h2><div class="ck-lines">'+rows+'</div>'+
+      '</div><aside class="cp-sum" aria-label="Захиалгын дүн"><span class="pm-kick">Захиалга</span><h2>Таны захиалга</h2><div class="ck-lines">'+rows+'</div>'+
         '<div class="cp-row"><span class="mute">Барааны дүн</span><span class="mono">'+fmt(sum)+'</span></div>'+
         '<div class="cp-row"><span class="mute">Хүргэлт</span><span class="mono">'+(dlv?fmt(dlv):'Үнэгүй')+'</span></div>'+
         '<div class="cp-row tot"><span>Төлөх дүн</span><span class="mono">'+fmt(sum+dlv)+'</span></div>'+
-        '<p class="err" id="cErr" role="alert"></p><button class="btn block" type="submit">Захиалга илгээх</button></aside></div></form>';
+        '<p class="err" id="cErr" role="alert"></p><button class="pm-pay" type="submit">Захиалга илгээх<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><p class="pm-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Таны мэдээлэл найдвартай хамгаалагдана</p></aside></div></form>';
     $('#coForm').onsubmit=function(e){
       e.preventDefault();
       if(!user) return openAuth('Захиалахын тулд нэвтэрнэ үү');
