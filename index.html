@@ -1676,6 +1676,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       return '<div class="aorder" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><span style="width:52px;height:52px;flex:none;background:var(--block);display:flex;align-items:center;justify-content:center;overflow:hidden">'+(r.img?'<img src="'+esc(r.img)+'" alt="" style="max-width:100%;max-height:100%;object-fit:contain">':'')+'</span>'+
         '<span style="flex:1;min-width:160px">'+esc(r.label)+' <span class="mono mute">'+fmt(p.price)+'</span>'+(p.hidden?' <b class="mute">(нуусан)</b>':'')+'</span>'+
         '<button class="link" type="button" data-tip="Барааны мэдээлэл, зургийг засах" data-pedit="'+p.id+'">Засах</button>'+
+        (p.hidden&&p.id<400001?'':'<button class="link" type="button" data-pdel="'+p.id+'" style="color:#d33">Устгах</button>')+
         '<span class="mute">'+(q===undefined?(r.inherit?'Өнгө/барааны нийт тоо ашиглаж байна':'Тоо оруулаагүй'):q<=0?'Дууссан':'Үлдсэн')+'</span>'+
         '<input type="number" min="0" step="1" inputmode="numeric" data-stock-in="'+esc(r.key)+'" value="'+(q===undefined?'':q)+'" style="width:90px;padding:8px;border:1px solid var(--line);font:inherit" aria-label="Үлдэгдэл: '+esc(r.label)+'">'+
         '<button class="link" type="button" data-tip="Үлдэгдлийг хадгалах" data-stock-save="'+esc(r.key)+'">Хадгалах</button></div>';
@@ -1952,6 +1953,15 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
       if(po.hasAttribute('data-podel')){if(!confirm('Энэ зарыг устгах уу?'))return;api.adminDeletePoster(+po.getAttribute('data-podel')).then(function(){return afterPosterChange('Зар устгагдлаа')},function(){toast('Устгаж чадсангүй.')});return}
       var mv=po.getAttribute('data-pomv').split('|'),mi=APOS.findIndex(function(a){return a.id===+mv[0]}),mj=mi+ +mv[1];
       if(mi>=0&&mj>=0&&mj<APOS.length){var arr=APOS.slice();arr.splice(mj,0,arr.splice(mi,1)[0]);Promise.all(arr.map(function(a,k){return a.sort===k?null:api.adminSavePoster({id:a.id,sort:k})})).then(function(){return afterPosterChange()},function(){toast('Хадгалж чадсангүй.')})}
+      return;
+    }
+    var pd=e.target.closest('[data-pdel]');
+    if(pd){
+      if(!pd.getAttribute('data-sure')){pd.setAttribute('data-sure','1');pd.textContent='Баталгаажуулах';setTimeout(function(){if(pd.isConnected){pd.removeAttribute('data-sure');pd.textContent='Устгах'}},4000);return}
+      var pid=parseInt(pd.getAttribute('data-pdel'),10), pp=ALLP.filter(function(x){return x.id===pid})[0]; if(!pp)return;
+      pd.disabled=true;
+      var job=pid>=400001?api.adminDeleteProduct(pid):api.adminSaveProduct({id:pid,name:pp.name,price:pp.price,description:pp.desc||'',active:false});
+      job.then(function(){return loadCatalog()}).then(function(){renderGrid();renderAdminStock();toast(pid>=400001?'Бараа устгагдлаа':'Бараа сайтаас нуугдлаа')},function(){pd.disabled=false;pd.textContent='Устгах';pd.removeAttribute('data-sure');toast('Устгаж чадсангүй. Дахин оролдоно уу.')});
       return;
     }
     var pa=e.target.closest('[data-padd],[data-pedit]');
