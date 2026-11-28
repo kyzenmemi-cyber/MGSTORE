@@ -1178,7 +1178,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
     if(HERO_LOADING) return ['<div class="hero-slide sk" aria-hidden="true"></div>'];
     var out=POSTERS.map(function(x){
       var im='<img class="bg" src="'+esc(x.image_url)+'" alt="" draggable="false" onload="this.classList.add(\'ok\');this.parentNode.classList.remove(\'sk\')" onerror="this.parentNode.classList.remove(\'sk\')">';
-      return x.link?'<a class="hero-slide s-poster sk" href="'+esc(x.link)+'"'+(/^https?:/i.test(x.link)?' target="_blank" rel="noopener"':'')+'>'+im+'</a>':'<div class="hero-slide s-poster sk">'+im+'</div>';
+      return (x.link&&/^(https?:\/\/|#)/i.test(x.link))?'<a class="hero-slide s-poster sk" href="'+esc(x.link)+'"'+(/^https?:/i.test(x.link)?' target="_blank" rel="noopener"':'')+'>'+im+'</a>':'<div class="hero-slide s-poster sk">'+im+'</div>';
     });
     out.push('<a class="hero-slide s-ship" href="#info" data-go="info"><div class="big">12-24</div><div class="hs-in"><span class="hs-kick">Хүргэлт</span><h2 class="hs-t">12-24 цагийн дотор хүргэнэ</h2><p class="hs-p">Төлбөр орсноос хойш хурдан хүргэнэ. Банкны шилжүүлгээр төлнө.</p><span class="hs-cta">Дэлгэрэнгүй</span></div></a>');
     return out;
