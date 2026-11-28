@@ -234,7 +234,9 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .card .left{margin:0 0 4px}
 .lowrow{min-height:22px;margin:0 0 4px;display:flex;align-items:center}
 .leftn{font-size:12px;color:var(--mute);font-family:var(--mono);letter-spacing:.02em}
-.lowpill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:700;line-height:1.3;letter-spacing:.01em;white-space:nowrap}
+.lowpill{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:4px 10px;border-radius:999px;background:#fee2e2;color:#b91c1c;font-size:11px;font-weight:700;line-height:1.3;white-space:nowrap;overflow:hidden}
+@media (max-width:399px){.lowpill .lx{display:none}}
+.lowpill i{flex:none;width:6px;height:6px;border-radius:50%;background:currentColor}
 .card .cbody>.add{flex:none}
 .card .cbody>.add:first-of-type{margin-top:auto}
 .was{margin-left:6px;color:var(--mute);font-weight:400;text-decoration:line-through;text-decoration-color:#dc2626;text-decoration-thickness:2px}
@@ -1157,7 +1159,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
   }
   function cardHtml(p){
       var gone=soldOut(p.id), left=leftOf(p.id), pct=p.old>p.price?Math.round((1-p.price/p.old)*100):0, rl=revOf(p.id);
-      var lowP='<div class="lowrow">'+((!gone&&left!==undefined&&left>0)?(left<=3?'<span class="lowpill">Сүүлийн '+left+' ширхэг</span>':'<span class="leftn">Үлдсэн '+left+' ширхэг</span>'):'')+'</div>';
+      var lowP='<div class="lowrow">'+((!gone&&left!==undefined&&left>0)?(left<=3?'<span class="lowpill"><i></i>Сүүлийн '+left+' ширхэг<span class="lx"> үлдсэн</span></span>':'<span class="leftn">Үлдсэн '+left+' ширхэг</span>'):'')+'</div>';
       var badge=gone?'<span class="badge">Дууссан</span>':(pct>0?'<span class="badge sale-b">−'+pct+'%</span>':'');
       var dots=(p.colors&&p.colors.length>1&&p.colors.some(function(c){return c.img}))?'<div class="dots" role="group" aria-label="Өнгө">'+p.colors.slice(0,6).map(function(c,i){return '<button type="button" data-cc="'+p.id+':'+i+'" aria-label="'+esc(c.n)+'" aria-pressed="'+(i===0)+'"></button>'}).join('')+'</div>':'';
       return '<article class="card">'+
