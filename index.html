@@ -319,6 +319,21 @@ body.tip-off [data-tip]::after{opacity:0!important}
 .cp-sum h2{margin:0;font-family:var(--cond);font-weight:800;text-transform:uppercase;font-size:22px}
 .cp-sum .tot{border-top:1px solid var(--line);padding-top:14px;font-size:18px}
 
+
+/* rows of cards share track heights (subgrid): price sits right under the name, rows still line up */
+@supports (grid-template-rows: subgrid){
+  #grid.grid{row-gap:0}
+  #grid .card{display:grid;grid-row:span 6;grid-template-rows:subgrid;row-gap:0;margin-bottom:26px}
+  #grid .cbody{display:contents}
+  #grid .card .ccat{margin-top:12px;padding:0 2px}
+  #grid .card h3{margin-top:5px;min-height:0;padding:0 2px}
+  #grid .lowrow{min-height:0;margin:5px 0 0;padding:0 2px}
+  #grid .lowrow:empty{margin:0}
+  #grid .pgrp{margin-top:5px;padding:0 2px;display:flex;flex-direction:column;gap:5px}
+  #grid .card .add{margin-top:10px;align-self:end}
+  #grid .card[aria-hidden] .cbody>.sk{margin:8px 0 0 !important}
+  #grid .card[aria-hidden] .cbody>.sk:last-child{margin-top:10px !important}
+}
 /* premium checkout look */
 :root{--pm-card:#fff;--pm-tint:#f4f6fa;--pm-line:#e8ebf2;--pm-shadow:0 10px 30px rgba(40,60,100,.09);--pm-btn:linear-gradient(110deg,#0b0b0b,#3b3b3b)}
 :root[data-theme="dark"]{--pm-card:#171717;--pm-tint:#1f1f1f;--pm-line:#2c2c2c;--pm-shadow:0 10px 30px rgba(0,0,0,.45);--pm-btn:linear-gradient(110deg,#f1f1f1,#cfcfcf)}
@@ -1166,7 +1181,7 @@ body{padding-bottom:calc(62px + env(safe-area-inset-bottom,0px))}
         '<button class="heart" type="button" data-wish="'+p.id+'" aria-pressed="'+isWish(p.id)+'" aria-label="'+(isWish(p.id)?'Хадгалснаас хасах':'Хадгалах')+'">'+SVG_HEART+'</button>'+dots+'</div>'+
         '<div class="cbody"><div class="ccat">'+esc(p.cat||'Бусад')+'</div>'+
         '<h3 data-qv="'+p.id+'" style="cursor:pointer">'+esc(p.name)+'</h3>'+
-        lowP+'<div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+
+        lowP+'<div class="pgrp"><div class="prow"><span class="price">'+priceHtml(p)+'</span></div>'+endsHtml(p)+'</div>'+
         (gone?'<button class="add" type="button" disabled>Дууссан</button>':'<button class="add" type="button" data-add="'+p.id+'">'+SVG_BASKET+'Сагслах</button>')+'</div>'+
       '</article>';
   }
